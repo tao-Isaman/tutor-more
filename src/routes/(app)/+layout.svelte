@@ -24,12 +24,12 @@
 	type NavItem = { href: string; label: string; icon: typeof House; badge?: number };
 	const nav = $derived(
 		[
-			data.user && { href: '/home', label: 'Home', icon: House },
-			{ href: '/explore', label: 'Explore', icon: Compass },
-			data.user && role === 'student' && { href: '/checkin', label: 'Check in', icon: QrCode },
-			data.user && isStaffRole(role) && { href: '/teach', label: 'Teach', icon: GraduationCap },
-			data.user && { href: '/messages', label: 'Room', icon: MessageCircle, badge: unread },
-			data.user && role === 'admin' && { href: '/admin', label: 'Admin', icon: ShieldCheck }
+			data.user && { href: '/home', label: 'หน้าแรก', icon: House },
+			{ href: '/explore', label: 'ค้นหาคอร์ส', icon: Compass },
+			data.user && role === 'student' && { href: '/checkin', label: 'เช็คชื่อ', icon: QrCode },
+			data.user && isStaffRole(role) && { href: '/teach', label: 'การสอน', icon: GraduationCap },
+			data.user && { href: '/messages', label: 'แชท', icon: MessageCircle, badge: unread },
+			data.user && role === 'admin' && { href: '/admin', label: 'แอดมิน', icon: ShieldCheck }
 		].filter(Boolean) as NavItem[]
 	);
 
@@ -61,7 +61,7 @@
 <div class="min-h-dvh md:flex">
 	<!-- Desktop rail (Fastwork-style) -->
 	<aside class="sticky top-0 hidden h-dvh w-[104px] shrink-0 flex-col items-center py-6 md:flex">
-		<a href={data.user ? '/home' : '/'} class="mb-6 transition hover:scale-105" aria-label="Tutor More Academy home">
+		<a href={data.user ? '/home' : '/'} class="mb-6 transition hover:scale-105" aria-label="หน้าแรก ติวเตอร์มอร์">
 			<Logo size={46} />
 		</a>
 
@@ -69,7 +69,7 @@
 			<a
 				href="/profile"
 				class="mb-4 rounded-2xl p-2 transition {active('/profile') ? 'bg-white shadow-md' : 'hover:bg-white/70'}"
-				aria-label="Your profile"
+				aria-label="โปรไฟล์ของคุณ"
 			>
 				<Avatar profile={data.profile} size={46} />
 			</a>
@@ -79,7 +79,7 @@
 			{#each nav as item (item.href)}
 				<a
 					href={item.href}
-					class="group relative flex w-[84px] flex-col items-center gap-1 rounded-2xl py-2.5 text-[13px] transition
+					class="group relative flex w-[84px] flex-col items-center gap-1 rounded-2xl px-1 py-2.5 text-center text-[13px] leading-tight transition
 						{active(item.href) ? 'bg-white font-normal text-brand-600 shadow-sm' : 'text-neutral-600 hover:bg-white/70 hover:text-ink'}"
 				>
 					<item.icon size={24} strokeWidth={1.6} />
@@ -96,21 +96,21 @@
 		{#if data.user}
 			<a
 				href="/settings"
-				class="flex w-[84px] flex-col items-center gap-1 rounded-2xl py-2.5 text-[13px] transition
+				class="flex w-[84px] flex-col items-center gap-1 rounded-2xl px-1 py-2.5 text-center text-[13px] leading-tight transition
 					{active('/settings') ? 'bg-white text-brand-600 shadow-sm' : 'text-neutral-600 hover:bg-white/70'}"
 			>
 				<Settings size={24} strokeWidth={1.6} />
-				Settings
+				ตั้งค่า
 			</a>
 			<button
 				onclick={logout}
-				class="mt-1 flex w-[84px] flex-col items-center gap-1 rounded-2xl py-2.5 text-[13px] text-neutral-500 transition hover:bg-white/70 hover:text-brand-600"
+				class="mt-1 flex w-[84px] flex-col items-center gap-1 rounded-2xl px-1 py-2.5 text-center text-[13px] leading-tight text-neutral-500 transition hover:bg-white/70 hover:text-brand-600"
 			>
 				<LogOut size={22} strokeWidth={1.6} />
-				Log out
+				ออกจากระบบ
 			</button>
 		{:else}
-			<a href="/login" class="btn btn-primary btn-sm">Log in</a>
+			<a href="/login" class="btn btn-primary btn-sm">เข้าสู่ระบบ</a>
 		{/if}
 	</aside>
 
@@ -122,11 +122,11 @@
 		</a>
 		{#if data.user}
 			<div class="flex items-center gap-1">
-				<a href="/settings" class="btn-ghost rounded-full p-2" aria-label="Settings"><Settings size={20} /></a>
-				<a href="/profile" aria-label="Your profile"><Avatar profile={data.profile} size={34} /></a>
+				<a href="/settings" class="btn-ghost rounded-full p-2" aria-label="ตั้งค่า"><Settings size={20} /></a>
+				<a href="/profile" aria-label="โปรไฟล์ของคุณ"><Avatar profile={data.profile} size={34} /></a>
 			</div>
 		{:else}
-			<a href="/login" class="btn btn-primary btn-sm">Log in</a>
+			<a href="/login" class="btn btn-primary btn-sm">เข้าสู่ระบบ</a>
 		{/if}
 	</header>
 

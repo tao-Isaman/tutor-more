@@ -25,11 +25,12 @@
 	let { data }: PageProps = $props();
 
 	const icons = { video: Film, text: FileText, image: Image, file: Paperclip, link: Link };
+	const typeLabels = { video: 'วิดีโอ', text: 'บทความ', image: 'รูปภาพ', file: 'ไฟล์', link: 'ลิงก์' };
 
 	const groups = $derived.by(() => {
 		const map = new Map<string, Tables<'contents'>[]>();
 		for (const c of data.contents) {
-			const key = c.section || 'Lessons';
+			const key = c.section || 'บทเรียน';
 			if (!map.has(key)) map.set(key, []);
 			map.get(key)!.push(c);
 		}
@@ -53,11 +54,11 @@
 	}
 
 	async function remove(c: Tables<'contents'>) {
-		if (!confirm(`Delete "${c.title}"? Students' progress for it will be removed too.`)) return;
+		if (!confirm(`ลบ "${c.title}" ใช่ไหม? ความคืบหน้าของนักเรียนในบทเรียนนี้จะถูกลบไปด้วย`)) return;
 		const { error } = await data.supabase.from('contents').delete().eq('id', c.id);
 		if (error) return toast.error(errorMessage(error));
 		if (c.storage_path) await data.supabase.storage.from('course-media').remove([c.storage_path]);
-		toast('Lesson deleted');
+		toast('ลบบทเรียนแล้ว');
 		await invalidate('app:contents');
 	}
 
@@ -80,16 +81,16 @@
 	}
 </script>
 
-<svelte:head><title>Lessons · {data.subject.title}</title></svelte:head>
+<svelte:head><title>บทเรียน · {data.subject.title}</title></svelte:head>
 
 <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
 	{#if data.isStaff}
-		<p class="text-muted">{data.contents.length} item{data.contents.length === 1 ? '' : 's'} in this class</p>
-		<button class="btn btn-primary" onclick={openNew}><Plus size={18} /> Add lesson</button>
+		<p class="text-muted">คลาสนี้มี {data.contents.length} รายการ</p>
+		<button class="btn btn-primary" onclick={openNew}><Plus size={18} /> เพิ่มบทเรียน</button>
 	{:else if data.contents.length}
 		<div class="flex w-full items-center gap-4 rounded-2xl bg-neutral-50 p-4">
 			<div class="flex-1">
-				<div class="flex justify-between text-sm"><span>Your progress</span><span>{doneCount}/{data.contents.length}</span></div>
+				<div class="flex justify-between text-sm"><span>ความคืบหน้าของน้อง</span><span>{doneCount}/{data.contents.length}</span></div>
 				<div class="mt-2 h-2 overflow-hidden rounded-full bg-white">
 					<div class="h-full rounded-full bg-brand-600 transition-all" style="width:{percent(doneCount, data.contents.length)}%"></div>
 				</div>
@@ -100,11 +101,11 @@
 
 {#if data.contents.length === 0}
 	<EmptyState
-		title={data.isStaff ? 'No lessons yet' : 'Lessons coming soon'}
-		text={data.isStaff ? 'Add videos, notes, images or files for your students.' : 'Your tutor has not posted any lessons yet.'}
+		title={data.isStaff ? 'ยังไม่มีบทเรียน' : 'บทเรียนกำลังจะมาเร็ว ๆ นี้'}
+		text={data.isStaff ? 'เพิ่มวิดีโอ โน้ต รูปภาพ หรือไฟล์ให้นักเรียนได้เลย' : 'ติวเตอร์ยังไม่ได้โพสต์บทเรียน'}
 	>
 		{#snippet icon()}<Film size={26} />{/snippet}
-		{#if data.isStaff}<button class="btn btn-primary" onclick={openNew}><Plus size={18} /> Add first lesson</button>{/if}
+		{#if data.isStaff}<button class="btn btn-primary" onclick={openNew}><Plus size={18} /> เพิ่มบทเรียนแรก</button>{/if}
 	</EmptyState>
 {/if}
 
@@ -124,21 +125,21 @@
 						<a href="/terms/{data.term.id}/content/{c.id}" class="min-w-0 flex-1">
 							<div class="flex items-center gap-2">
 								<span class="truncate">{c.title}</span>
-								{#if !c.is_published}<span class="badge bg-neutral-100 text-muted"><EyeOff size={12} /> Hidden</span>{/if}
+								{#if !c.is_published}<span class="badge bg-neutral-100 text-muted"><EyeOff size={12} /> ซ่อนอยู่</span>{/if}
 							</div>
-							<div class="mt-0.5 text-sm text-muted capitalize">
-								{c.type}{#if c.duration_seconds} · {formatDuration(c.duration_seconds)}{/if}
+							<div class="mt-0.5 text-sm text-muted">
+								{typeLabels[c.type]}{#if c.duration_seconds} · {formatDuration(c.duration_seconds)}{/if}
 								{#if prog && !prog.completed_at && c.type === 'video'}
-									· watched {percent(prog.watched_seconds, prog.duration_seconds)}%
+									· ดูแล้ว {percent(prog.watched_seconds, prog.duration_seconds)}%
 								{/if}
 							</div>
 						</a>
 						{#if data.isStaff}
 							<div class="flex items-center opacity-100 transition md:opacity-0 md:group-hover:opacity-100">
-								<button class="btn-ghost rounded-full p-2" aria-label="Move up" onclick={() => move(c, -1)}><ArrowUp size={16} /></button>
-								<button class="btn-ghost rounded-full p-2" aria-label="Move down" onclick={() => move(c, 1)}><ArrowDown size={16} /></button>
-								<button class="btn-ghost rounded-full p-2" aria-label="Edit" onclick={() => openEdit(c)}><Pencil size={16} /></button>
-								<button class="btn-ghost rounded-full p-2 text-brand-600" aria-label="Delete" onclick={() => remove(c)}><Trash2 size={16} /></button>
+								<button class="btn-ghost rounded-full p-2" aria-label="เลื่อนขึ้น" onclick={() => move(c, -1)}><ArrowUp size={16} /></button>
+								<button class="btn-ghost rounded-full p-2" aria-label="เลื่อนลง" onclick={() => move(c, 1)}><ArrowDown size={16} /></button>
+								<button class="btn-ghost rounded-full p-2" aria-label="แก้ไข" onclick={() => openEdit(c)}><Pencil size={16} /></button>
+								<button class="btn-ghost rounded-full p-2 text-brand-600" aria-label="ลบ" onclick={() => remove(c)}><Trash2 size={16} /></button>
 							</div>
 						{/if}
 					</li>
@@ -149,7 +150,7 @@
 </div>
 
 {#if data.isStaff && data.user}
-	<Modal bind:open={formOpen} title={editing ? 'Edit lesson' : 'Add lesson'} width="max-w-2xl">
+	<Modal bind:open={formOpen} title={editing ? 'แก้ไขบทเรียน' : 'เพิ่มบทเรียน'} width="max-w-2xl">
 		{#key editing?.id}
 			<ContentForm
 				supabase={data.supabase}

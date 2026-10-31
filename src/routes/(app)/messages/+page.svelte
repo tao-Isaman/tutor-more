@@ -112,17 +112,18 @@
 	}
 
 	const dayKey = (d: string) => new Date(d).toDateString();
+	const roleLabels: Record<string, string> = { admin: 'แอดมิน', tutor: 'ติวเตอร์', student: 'นักเรียน' };
 </script>
 
-<svelte:head><title>Room · Tutor More Academy</title></svelte:head>
+<svelte:head><title>แชท · Tutor More Academy</title></svelte:head>
 
 <div class="flex h-[calc(100dvh-8.5rem)] md:h-[calc(100dvh-1.5rem)]">
 	<!-- Conversation list -->
 	<aside class="flex w-full flex-col border-line md:w-[340px] md:border-r {active ? 'hidden md:flex' : 'flex'}">
 		<div class="flex items-center justify-between px-5 pt-6 pb-4">
-			<h1 class="text-2xl">Room</h1>
+			<h1 class="text-2xl">แชท</h1>
 			{#if data.tutors.length}
-				<button class="btn btn-soft btn-sm" onclick={() => (newOpen = true)}><Plus size={16} /> New</button>
+				<button class="btn btn-soft btn-sm" onclick={() => (newOpen = true)}><Plus size={16} /> ใหม่</button>
 			{/if}
 		</div>
 		<ul class="flex-1 overflow-y-auto px-2 pb-4">
@@ -139,7 +140,7 @@
 								<span class="shrink-0 text-xs text-muted">{timeAgo(c.last_message_at)}</span>
 							</div>
 							<div class="flex items-center gap-2">
-								<span class="flex-1 truncate text-sm {c.unread ? 'text-ink' : 'text-muted'}">{c.last_message_preview ?? 'Say hello 👋'}</span>
+								<span class="flex-1 truncate text-sm {c.unread ? 'text-ink' : 'text-muted'}">{c.last_message_preview ?? 'ทักทายกันหน่อย 👋'}</span>
 								{#if c.unread}<span class="min-w-5 rounded-full bg-brand-600 px-1.5 text-center text-xs leading-5 text-white">{c.unread}</span>{/if}
 							</div>
 						</div>
@@ -147,8 +148,8 @@
 				</li>
 			{:else}
 				<li class="px-3 py-10 text-center text-sm text-muted">
-					No conversations yet.
-					{#if data.tutors.length}<button class="mt-2 block w-full text-brand-600" onclick={() => (newOpen = true)}>Message a tutor</button>{/if}
+					ยังไม่มีบทสนทนา
+					{#if data.tutors.length}<button class="mt-2 block w-full text-brand-600" onclick={() => (newOpen = true)}>ทักติวเตอร์</button>{/if}
 				</li>
 			{/each}
 		</ul>
@@ -158,23 +159,23 @@
 	<section class="min-w-0 flex-1 flex-col {active ? 'flex' : 'hidden md:flex'}">
 		{#if active}
 			<header class="flex items-center gap-3 border-b border-line px-4 py-3 md:px-6">
-				<a href="/messages" class="btn-ghost -ml-2 rounded-full p-2 md:hidden" aria-label="Back"><ChevronLeft size={20} /></a>
+				<a href="/messages" class="btn-ghost -ml-2 rounded-full p-2 md:hidden" aria-label="ย้อนกลับ"><ChevronLeft size={20} /></a>
 				<Avatar profile={active.other} size={40} />
 				<div class="min-w-0">
 					<div class="truncate">{fullName(active.other)}</div>
-					<div class="text-xs text-muted capitalize">{active.other?.nickname} · {active.other?.role}</div>
+					<div class="text-xs text-muted">{active.other?.nickname} · {roleLabels[active.other?.role ?? ''] ?? active.other?.role}</div>
 				</div>
 			</header>
 
 			<div bind:this={scroller} class="flex-1 space-y-1 overflow-y-auto bg-canvas/40 px-4 py-5 md:px-8">
 				{#if loading}
-					<p class="py-10 text-center text-muted">Loading…</p>
+					<p class="py-10 text-center text-muted">กำลังโหลด…</p>
 				{/if}
 				{#each messages as m, i (m.id)}
 					{@const mine = m.sender_id === me}
 					{#if i === 0 || dayKey(messages[i - 1].created_at) !== dayKey(m.created_at)}
 						<div class="py-3 text-center text-xs text-muted">
-							{new Date(m.created_at).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+							{new Date(m.created_at).toLocaleDateString('th-TH', { weekday: 'short', day: 'numeric', month: 'short' })}
 						</div>
 					{/if}
 					<div class="flex {mine ? 'justify-end' : 'justify-start'}">
@@ -200,7 +201,7 @@
 					class="input max-h-40 min-h-[48px] flex-1 resize-none rounded-3xl"
 					rows="1"
 					maxlength="4000"
-					placeholder="Type a message…"
+					placeholder="พิมพ์ข้อความ…"
 					bind:value={body}
 					onkeydown={(e) => {
 						if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
@@ -209,11 +210,11 @@
 						}
 					}}
 				></textarea>
-				<button class="btn btn-primary h-12 w-12 p-0" disabled={sending || !body.trim()} aria-label="Send"><Send size={18} /></button>
+				<button class="btn btn-primary h-12 w-12 p-0" disabled={sending || !body.trim()} aria-label="ส่ง"><Send size={18} /></button>
 			</form>
 		{:else}
 			<div class="flex flex-1 items-center justify-center p-8">
-				<EmptyState title="Your messages" text="Chat privately with your tutor or students. Pick a conversation to start.">
+				<EmptyState title="ข้อความของคุณ" text="แชทส่วนตัวกับติวเตอร์หรือนักเรียนได้ที่นี่ เลือกบทสนทนาเพื่อเริ่มคุยเลย">
 					{#snippet icon()}<MessageCircle size={26} />{/snippet}
 				</EmptyState>
 			</div>
@@ -221,7 +222,7 @@
 	</section>
 </div>
 
-<Modal bind:open={newOpen} title="Message a tutor">
+<Modal bind:open={newOpen} title="ทักติวเตอร์">
 	<ul class="space-y-2">
 		{#each data.tutors as { tutor, subjects } (tutor.id)}
 			<li>

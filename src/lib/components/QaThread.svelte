@@ -91,7 +91,7 @@
 		c.is_resolved = !c.is_resolved;
 	}
 	async function remove(c: Comment) {
-		if (!confirm('Delete this message?')) return;
+		if (!confirm('ลบข้อความนี้ใช่ไหม?')) return;
 		const { error } = await supabase.from('comments').delete().eq('id', c.id);
 		if (error) return toast.error(errorMessage(error));
 		comments = comments.filter((x) => x.id !== c.id && x.parent_id !== c.id);
@@ -105,20 +105,20 @@
 		<div class="min-w-0 flex-1">
 			<div class="flex flex-wrap items-center gap-2 text-sm">
 				<span class="font-normal">{displayName(c.author)}</span>
-				{#if staffAuthor}<span class="badge bg-brand-600 text-white">Tutor</span>{/if}
+				{#if staffAuthor}<span class="badge bg-brand-600 text-white">ติวเตอร์</span>{/if}
 				<span class="text-muted">{timeAgo(c.created_at)}</span>
-				{#if !isReply && c.is_resolved}<span class="badge bg-emerald-50 text-emerald-700"><CircleCheck size={12} /> Answered</span>{/if}
+				{#if !isReply && c.is_resolved}<span class="badge bg-emerald-50 text-emerald-700"><CircleCheck size={12} /> ตอบแล้ว</span>{/if}
 			</div>
 			<p class="mt-1 font-read whitespace-pre-wrap text-neutral-800">{c.body}</p>
 			<div class="mt-1 flex gap-3 text-sm text-muted">
 				{#if !isReply}
-					<button class="hover:text-ink" onclick={() => (replyTo = replyTo === c.id ? null : c.id)}>Reply</button>
+					<button class="hover:text-ink" onclick={() => (replyTo = replyTo === c.id ? null : c.id)}>ตอบกลับ</button>
 					{#if isStaff || c.user_id === userId}
-						<button class="hover:text-ink" onclick={() => toggleResolved(c)}>{c.is_resolved ? 'Reopen' : 'Mark answered'}</button>
+						<button class="hover:text-ink" onclick={() => toggleResolved(c)}>{c.is_resolved ? 'เปิดอีกครั้ง' : 'ทำเครื่องหมายว่าตอบแล้ว'}</button>
 					{/if}
 				{/if}
 				{#if isStaff || c.user_id === userId}
-					<button class="hover:text-brand-600" onclick={() => remove(c)} aria-label="Delete"><Trash2 size={14} /></button>
+					<button class="hover:text-brand-600" onclick={() => remove(c)} aria-label="ลบ"><Trash2 size={14} /></button>
 				{/if}
 			</div>
 		</div>
@@ -126,24 +126,24 @@
 {/snippet}
 
 <section>
-	<h2 class="mb-4 flex items-center gap-2 text-xl"><MessageSquare size={20} class="text-brand-600" /> Questions & answers</h2>
+	<h2 class="mb-4 flex items-center gap-2 text-xl"><MessageSquare size={20} class="text-brand-600" /> ถาม-ตอบ</h2>
 
 	<form onsubmit={ask} class="mb-6 flex items-end gap-2">
 		<textarea
 			class="input min-h-[52px] flex-1 resize-y"
 			rows="1"
 			maxlength="4000"
-			placeholder="Ask a question about this lesson…"
+			placeholder="สงสัยตรงไหนในบทเรียนนี้ ถามได้เลย…"
 			bind:value={body}
 			onkeydown={(e) => e.key === 'Enter' && (e.metaKey || e.ctrlKey) && e.currentTarget.form?.requestSubmit()}
 		></textarea>
-		<button class="btn btn-primary h-[52px]" disabled={busy || !body.trim()} aria-label="Post question">
+		<button class="btn btn-primary h-[52px]" disabled={busy || !body.trim()} aria-label="ส่งคำถาม">
 			{#if busy}<LoaderCircle size={18} class="animate-spin" />{:else}<Send size={18} />{/if}
 		</button>
 	</form>
 
 	{#if roots.length === 0}
-		<p class="rounded-2xl bg-neutral-50 px-5 py-6 text-center text-muted">No questions yet — be the first to ask.</p>
+		<p class="rounded-2xl bg-neutral-50 px-5 py-6 text-center text-muted">ยังไม่มีคำถาม — มาเป็นคนแรกที่ถามกันเลย</p>
 	{/if}
 
 	<ul class="space-y-6">
@@ -158,8 +158,8 @@
 						<form onsubmit={(e) => reply(e, c.id)} class="flex items-center gap-2">
 							<CornerDownRight size={16} class="shrink-0 text-muted" />
 							<!-- svelte-ignore a11y_autofocus -->
-							<input class="input" maxlength="4000" placeholder="Write a reply…" autofocus bind:value={replyBody} />
-							<button class="btn btn-dark btn-sm" disabled={busy || !replyBody.trim()}>Reply</button>
+							<input class="input" maxlength="4000" placeholder="เขียนคำตอบ…" autofocus bind:value={replyBody} />
+							<button class="btn btn-dark btn-sm" disabled={busy || !replyBody.trim()}>ตอบกลับ</button>
 						</form>
 					{/if}
 				</div>

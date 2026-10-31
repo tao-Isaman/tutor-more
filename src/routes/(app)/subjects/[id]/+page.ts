@@ -11,7 +11,7 @@ export const load: PageLoad = async ({ parent, params, depends }) => {
 		.select(`*, terms(*), subject_tutors(tutor:profiles(${PROFILE_LITE}, bio, school))`)
 		.eq('id', params.id)
 		.maybeSingle();
-	if (!subject) error(404, 'Subject not found');
+	if (!subject) error(404, 'ไม่พบวิชานี้');
 
 	const termIds = subject.terms.map((t) => t.id);
 	const [seats, mine, staff] = await Promise.all([

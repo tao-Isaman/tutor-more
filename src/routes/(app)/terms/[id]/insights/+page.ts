@@ -4,7 +4,7 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ parent, params }) => {
 	const { supabase, isStaff } = await parent();
-	if (!isStaff) error(403, 'Tutors only');
+	if (!isStaff) error(403, 'เฉพาะติวเตอร์เท่านั้น');
 
 	const [{ data: report, error: err }, { data: contents }, { data: students }] = await Promise.all([
 		supabase.rpc('term_content_report', { p_term_id: params.id }),

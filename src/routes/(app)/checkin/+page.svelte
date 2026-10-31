@@ -25,7 +25,7 @@
 	}
 
 	async function checkIn(sessionId: string, token: string) {
-		state = { kind: 'working', text: 'Checking you in…' };
+		state = { kind: 'working', text: 'กำลังเช็คชื่อ…' };
 
 		const { data: session } = await data.supabase
 			.from('attendance_sessions')
@@ -36,7 +36,7 @@
 
 		let coords: GeolocationCoordinates | null = null;
 		if (session?.require_location) {
-			state = { kind: 'working', text: 'Getting your location…' };
+			state = { kind: 'working', text: 'กำลังหาตำแหน่งของคุณ…' };
 			try {
 				coords = (await getPosition()).coords;
 			} catch (e) {
@@ -46,12 +46,12 @@
 					status: 'location_required',
 					title,
 					message: denied
-						? 'Location permission is blocked. Allow location for this site in your browser settings, then scan again.'
-						: 'Could not get your location. Turn on GPS/location services and scan again.'
+						? 'สิทธิ์เข้าถึงตำแหน่งถูกบล็อกอยู่ อนุญาตตำแหน่งสำหรับเว็บนี้ในการตั้งค่าเบราว์เซอร์ แล้วสแกนใหม่อีกครั้ง'
+						: 'ไม่สามารถระบุตำแหน่งของคุณได้ เปิด GPS/บริการตำแหน่ง แล้วสแกนใหม่อีกครั้ง'
 				};
 				return;
 			}
-			state = { kind: 'working', text: 'Checking you in…' };
+			state = { kind: 'working', text: 'กำลังเช็คชื่อ…' };
 		}
 
 		const { data: rows, error } = await data.supabase.rpc('check_in', {
@@ -78,7 +78,7 @@
 			if (url.pathname !== '/checkin' || !s || !t) throw new Error();
 			void checkIn(s, t);
 		} catch {
-			state = { kind: 'result', status: 'error', message: "That QR code isn't a Tutor More check-in code." };
+			state = { kind: 'result', status: 'error', message: 'QR นี้ไม่ใช่โค้ดเช็คชื่อของ Tutor More' };
 		}
 	}
 
@@ -96,20 +96,20 @@
 	const good = $derived(state.kind === 'result' && (state.status === 'ok' || state.status === 'already'));
 </script>
 
-<svelte:head><title>Check in · Tutor More Academy</title></svelte:head>
+<svelte:head><title>เช็คชื่อ · Tutor More Academy</title></svelte:head>
 
 <div class="mx-auto flex max-w-lg flex-col items-center px-5 py-10 text-center md:py-16">
 	{#if state.kind === 'idle'}
 		<div class="flex h-20 w-20 items-center justify-center rounded-3xl bg-sun-400"><QrCode size={40} class="text-brand-600" /></div>
-		<h1 class="mt-6 text-3xl">Check in to class</h1>
-		<p class="mt-2 text-muted">Scan the QR code your tutor shows on the screen. You can also use your phone's camera app.</p>
+		<h1 class="mt-6 text-3xl">เช็คชื่อเข้าเรียน</h1>
+		<p class="mt-2 text-muted">สแกน QR ที่ติวเตอร์แสดงบนจอ หรือจะใช้แอปกล้องในมือถือก็ได้</p>
 		<button class="btn btn-primary mt-8 px-8 py-3 text-base" onclick={() => (state = { kind: 'scanning' })}>
-			<ScanLine size={20} /> Open scanner
+			<ScanLine size={20} /> เปิดกล้องสแกน
 		</button>
 	{:else if state.kind === 'scanning'}
-		<h1 class="mb-6 text-2xl">Scan the QR code</h1>
+		<h1 class="mb-6 text-2xl">สแกน QR โค้ด</h1>
 		<QrScanner onscan={handleScan} />
-		<button class="btn btn-ghost mt-6" onclick={() => (state = { kind: 'idle' })}>Cancel</button>
+		<button class="btn btn-ghost mt-6" onclick={() => (state = { kind: 'idle' })}>ยกเลิก</button>
 	{:else if state.kind === 'working'}
 		<LoaderCircle size={56} class="animate-spin text-brand-600" />
 		<p class="mt-6 text-xl">{state.text}</p>
@@ -122,12 +122,12 @@
 			{:else}<CircleX size={56} />{/if}
 		</div>
 		<h1 class="mt-6 text-3xl">
-			{#if state.status === 'ok'}You're checked in!
-			{:else if state.status === 'already'}Already checked in
-			{:else if state.status === 'expired'}QR code expired
-			{:else if state.status === 'too_far'}Too far from class
-			{:else if state.status === 'location_required'}Location needed
-			{:else}Couldn't check in{/if}
+			{#if state.status === 'ok'}เช็คชื่อสำเร็จ!
+			{:else if state.status === 'already'}เช็คชื่อไปแล้ว
+			{:else if state.status === 'expired'}QR โค้ดหมดอายุแล้ว
+			{:else if state.status === 'too_far'}อยู่ไกลจากห้องเรียนเกินไป
+			{:else if state.status === 'location_required'}ต้องเปิดตำแหน่ง
+			{:else}เช็คชื่อไม่สำเร็จ{/if}
 		</h1>
 		{#if state.title}<p class="mt-2 text-lg">{state.title}</p>{/if}
 		<p class="mt-2 text-muted">
@@ -135,9 +135,9 @@
 		</p>
 		<div class="mt-8 flex gap-3">
 			{#if !good}
-				<button class="btn btn-primary" onclick={() => (state = { kind: 'scanning' })}><ScanLine size={18} /> Scan again</button>
+				<button class="btn btn-primary" onclick={() => (state = { kind: 'scanning' })}><ScanLine size={18} /> สแกนอีกครั้ง</button>
 			{/if}
-			<a href="/home" class="btn btn-soft">Go home</a>
+			<a href="/home" class="btn btn-soft">กลับหน้าแรก</a>
 		</div>
 	{/if}
 </div>

@@ -9,5 +9,5 @@ export function requireUser<T extends { user: User | null; profile: Profile | nu
 }
 
 export function requireRole(profile: Profile, roles: Profile['role'][]) {
-	if (!roles.includes(profile.role)) error(403, 'You do not have access to this page');
+	if (!roles.includes(profile.role)) error(403, 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
 }

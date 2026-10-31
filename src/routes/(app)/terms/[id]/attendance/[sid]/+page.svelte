@@ -84,7 +84,7 @@
 	async function setOpen(open: boolean) {
 		const { error } = await data.supabase.from('attendance_sessions').update({ is_open: open }).eq('id', s.id);
 		if (error) return toast.error(errorMessage(error));
-		toast(open ? 'Check-in reopened' : 'Check-in closed');
+		toast(open ? 'เปิดเช็คชื่ออีกครั้งแล้ว' : 'ปิดเช็คชื่อแล้ว');
 		token = '';
 		await invalidate('app:session');
 	}
@@ -100,7 +100,7 @@
 	}
 
 	async function unmark(studentId: string) {
-		if (!confirm('Remove this check-in?')) return;
+		if (!confirm('นำการเช็คชื่อนี้ออกใช่ไหม?')) return;
 		const { error } = await data.supabase.from('attendance_records').delete().eq('session_id', s.id).eq('student_id', studentId);
 		if (error) return toast.error(errorMessage(error));
 		records = records.filter((r) => r.student_id !== studentId);
@@ -112,7 +112,7 @@
 	}
 </script>
 
-<svelte:head><title>Check-in · {s.title}</title></svelte:head>
+<svelte:head><title>เช็คชื่อ · {s.title}</title></svelte:head>
 <svelte:document onfullscreenchange={() => (isFullscreen = !!document.fullscreenElement)} />
 
 <div bind:this={root} class="flex min-h-[calc(100dvh-1.5rem)] flex-col bg-white md:rounded-[28px] lg:flex-row">
@@ -122,8 +122,8 @@
 		<div class="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-sun-400"></div>
 
 		<div class="relative flex w-full items-center justify-between">
-			<a href="/terms/{data.term.id}/attendance" class="flex items-center gap-1 text-white/80 hover:text-white"><ChevronLeft size={18} /> Back</a>
-			<button class="rounded-full p-2 hover:bg-white/10" onclick={toggleFullscreen} aria-label="Toggle full screen">
+			<a href="/terms/{data.term.id}/attendance" class="flex items-center gap-1 text-white/80 hover:text-white"><ChevronLeft size={18} /> กลับ</a>
+			<button class="rounded-full p-2 hover:bg-white/10" onclick={toggleFullscreen} aria-label="สลับโหมดเต็มจอ">
 				{#if isFullscreen}<Minimize size={20} />{:else}<Maximize size={20} />{/if}
 			</button>
 		</div>
@@ -141,26 +141,26 @@
 				{#if qrSvg}
 					<div class="aspect-square w-[min(70vw,52vh)] [&>svg]:h-full [&>svg]:w-full">{@html qrSvg}</div>
 				{:else}
-					<div class="flex aspect-square w-[min(70vw,52vh)] items-center justify-center text-muted">Generating…</div>
+					<div class="flex aspect-square w-[min(70vw,52vh)] items-center justify-center text-muted">กำลังสร้าง QR…</div>
 				{/if}
 			</div>
 			<div class="relative mt-6 flex items-center gap-4">
 				<ProgressRing value={(remaining / s.rotate_seconds) * 100} size={46} label={String(remaining)} />
 				<div>
-					<div class="text-lg">Scan with your phone camera</div>
-					<div class="text-sm text-white/75">Code changes every {s.rotate_seconds}s · screenshots won't work</div>
+					<div class="text-lg">สแกนด้วยกล้องมือถือ</div>
+					<div class="text-sm text-white/75">QR เปลี่ยนทุก {s.rotate_seconds} วินาที · แคปหน้าจอไปใช้ไม่ได้นะ</div>
 				</div>
 			</div>
 			{#if s.require_location}
 				<div class="relative mt-4 flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm">
-					<MapPin size={16} /> Must be within {s.radius_m} m of this room
+					<MapPin size={16} /> ต้องอยู่ในระยะ {s.radius_m} ม. จากห้องนี้
 				</div>
 			{/if}
 		{:else}
 			<div class="relative mt-10 text-center">
-				<div class="text-3xl font-medium text-white">Check-in closed</div>
-				<p class="mt-2 text-white/80">{records.length} of {data.students.length} students checked in</p>
-				<button class="btn btn-sun mt-6" onclick={() => setOpen(true)}><RotateCcw size={18} /> Reopen check-in</button>
+				<div class="text-3xl font-medium text-white">ปิดเช็คชื่อแล้ว</div>
+				<p class="mt-2 text-white/80">เช็คชื่อแล้ว {records.length} จาก {data.students.length} คน</p>
+				<button class="btn btn-sun mt-6" onclick={() => setOpen(true)}><RotateCcw size={18} /> เปิดเช็คชื่ออีกครั้ง</button>
 			</div>
 		{/if}
 	</section>
@@ -170,19 +170,19 @@
 		<div class="border-b border-line p-6">
 			<div class="flex items-end justify-between">
 				<div>
-					<div class="text-sm text-muted">Checked in</div>
+					<div class="text-sm text-muted">เช็คชื่อแล้ว</div>
 					<div class="text-5xl font-medium">{records.length}<span class="text-2xl text-muted">/{data.students.length}</span></div>
 				</div>
 				{#if s.is_open}
-					<button class="btn btn-dark" onclick={() => setOpen(false)}><Power size={16} /> Close</button>
+					<button class="btn btn-dark" onclick={() => setOpen(false)}><Power size={16} /> ปิด</button>
 				{/if}
 			</div>
 			<div class="mt-5 flex gap-1 rounded-full bg-neutral-100 p-1 text-sm">
 				<button class="flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 {tab === 'present' ? 'bg-white shadow-sm' : 'text-muted'}" onclick={() => (tab = 'present')}>
-					<UserCheck size={15} /> Present {records.length}
+					<UserCheck size={15} /> มาเรียน {records.length}
 				</button>
 				<button class="flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 {tab === 'absent' ? 'bg-white shadow-sm' : 'text-muted'}" onclick={() => (tab = 'absent')}>
-					<Users size={15} /> Not yet {absentList.length}
+					<Users size={15} /> ยังไม่เช็คชื่อ {absentList.length}
 				</button>
 			</div>
 		</div>
@@ -196,23 +196,23 @@
 							<div class="truncate">{displayName(p)}</div>
 							<div class="text-xs text-muted">
 								{formatTime(r.checked_in_at)} ·
-								{#if r.method === 'manual'}marked by tutor{:else if r.distance_m != null}{Math.round(r.distance_m)} m away{:else}QR{/if}
+								{#if r.method === 'manual'}ติวเตอร์เช็คให้{:else if r.distance_m != null}ห่าง {Math.round(r.distance_m)} ม.{:else}QR{/if}
 							</div>
 						</div>
-						<button class="text-xs text-muted opacity-0 group-hover:opacity-100 hover:text-brand-600" onclick={() => unmark(r.student_id)}>Remove</button>
+						<button class="text-xs text-muted opacity-0 group-hover:opacity-100 hover:text-brand-600" onclick={() => unmark(r.student_id)}>นำออก</button>
 					</li>
 				{:else}
-					<li class="px-3 py-10 text-center text-muted">Waiting for the first scan…</li>
+					<li class="px-3 py-10 text-center text-muted">รอการสแกนคนแรก…</li>
 				{/each}
 			{:else}
 				{#each absentList as p (p.id)}
 					<li class="flex items-center gap-3 rounded-2xl px-3 py-2.5 hover:bg-neutral-50">
 						<Avatar profile={p} size={40} />
 						<div class="min-w-0 flex-1 truncate">{displayName(p)}</div>
-						<button class="btn btn-soft btn-sm" onclick={() => markPresent(p.id)}><UserPlus size={14} /> Mark</button>
+						<button class="btn btn-soft btn-sm" onclick={() => markPresent(p.id)}><UserPlus size={14} /> เช็คให้</button>
 					</li>
 				{:else}
-					<li class="px-3 py-10 text-center text-muted">Everyone is here 🎉</li>
+					<li class="px-3 py-10 text-center text-muted">มากันครบทุกคนแล้ว 🎉</li>
 				{/each}
 			{/if}
 		</ul>

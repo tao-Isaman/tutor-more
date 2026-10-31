@@ -16,7 +16,7 @@ export const load: LayoutLoad = async ({ parent, params, depends }) => {
 		supabase.rpc('is_term_student', { p_term_id: params.id })
 	]);
 
-	if (!term || !term.subject) error(404, 'Class not found');
+	if (!term || !term.subject) error(404, 'ไม่พบคลาสนี้');
 	// Not approved yet → back to the public subject page to request/await approval
 	if (!isStaff && !isStudent) redirect(303, `/subjects/${term.subject.id}`);
 

@@ -18,7 +18,7 @@
 	let busy = $state(false);
 	let locating = $state(false);
 	let f = $state({
-		title: `Class · ${new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(new Date())}`,
+		title: `คาบเรียน · ${new Intl.DateTimeFormat('th-TH', { day: 'numeric', month: 'short' }).format(new Date())}`,
 		require_location: false,
 		latitude: null as number | null,
 		longitude: null as number | null,
@@ -28,7 +28,7 @@
 	});
 
 	function locate() {
-		if (!navigator.geolocation) return toast.error('This device has no location service');
+		if (!navigator.geolocation) return toast.error('อุปกรณ์นี้ไม่รองรับการระบุตำแหน่ง');
 		locating = true;
 		navigator.geolocation.getCurrentPosition(
 			(pos) => {
@@ -39,7 +39,7 @@
 			},
 			(err) => {
 				locating = false;
-				toast.error(err.code === err.PERMISSION_DENIED ? 'Location permission denied' : 'Could not get your location');
+				toast.error(err.code === err.PERMISSION_DENIED ? 'ไม่ได้รับอนุญาตให้เข้าถึงตำแหน่ง' : 'ระบุตำแหน่งไม่สำเร็จ');
 			},
 			{ enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
 		);
@@ -51,7 +51,7 @@
 
 	async function start(e: SubmitEvent) {
 		e.preventDefault();
-		if (f.require_location && (f.latitude === null || f.longitude === null)) return toast.error('Get the classroom location first');
+		if (f.require_location && (f.latitude === null || f.longitude === null)) return toast.error('กรุณาระบุตำแหน่งห้องเรียนก่อน');
 		busy = true;
 		const { data: row, error } = await data.supabase
 			.from('attendance_sessions')
@@ -72,28 +72,28 @@
 	}
 </script>
 
-<svelte:head><title>Attendance · {data.subject.title}</title></svelte:head>
+<svelte:head><title>เช็คชื่อ · {data.subject.title}</title></svelte:head>
 
 {#if data.isStaff}
 	<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-		<p class="text-muted">{data.sessions.length} session{data.sessions.length === 1 ? '' : 's'} · {data.studentCount} students</p>
-		<button class="btn btn-primary" onclick={() => (open = true)}><Play size={18} /> Start check-in</button>
+		<p class="text-muted">{data.sessions.length} รอบเช็คชื่อ · นักเรียน {data.studentCount} คน</p>
+		<button class="btn btn-primary" onclick={() => (open = true)}><Play size={18} /> เริ่มเช็คชื่อ</button>
 	</div>
 {:else}
 	<div class="mb-8 grid gap-4 sm:grid-cols-3">
 		<div class="card flex items-center gap-4 p-5">
 			<ProgressRing value={percent(presentCount, closedCount)} size={56} stroke={6} track="#f1f1f1" color="#e11d2a" label="{percent(presentCount, closedCount)}%" />
-			<div><div class="text-sm text-muted">Attendance</div><div class="text-xl">{presentCount}/{closedCount} classes</div></div>
+			<div><div class="text-sm text-muted">เช็คชื่อ</div><div class="text-xl">{presentCount}/{closedCount} คาบ</div></div>
 		</div>
 		<a href="/checkin" class="card flex items-center gap-4 bg-sun-400 p-5 hover:bg-sun-300 sm:col-span-2">
 			<span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white"><QrCode class="text-brand-600" /></span>
-			<div><div class="text-lg">Scan to check in</div><div class="text-sm text-ink/70">Open the scanner when your tutor shows the QR code</div></div>
+			<div><div class="text-lg">สแกนเพื่อเช็คชื่อ</div><div class="text-sm text-ink/70">เปิดตัวสแกนเมื่อติวเตอร์แสดง QR code</div></div>
 		</a>
 	</div>
 {/if}
 
 {#if data.sessions.length === 0}
-	<EmptyState title="No check-ins yet" text={data.isStaff ? 'Start a check-in at the beginning of class and show the QR on the projector.' : 'Sessions will appear here after your first class.'}>
+	<EmptyState title="ยังไม่มีการเช็คชื่อ" text={data.isStaff ? 'เริ่มเช็คชื่อตอนต้นคาบ แล้วเปิด QR ขึ้นจอโปรเจกเตอร์ได้เลย' : 'รายการเช็คชื่อจะแสดงที่นี่หลังเรียนคาบแรก'}>
 		{#snippet icon()}<CalendarCheck size={26} />{/snippet}
 	</EmptyState>
 {:else}
@@ -122,11 +122,11 @@
 							<StatusBadge status={s.is_open ? 'open' : 'closed'} />
 						</div>
 					{:else if me}
-						<span class="badge bg-emerald-50 text-emerald-700">Present {me.method === 'manual' ? '(marked)' : ''}</span>
+						<span class="badge bg-emerald-50 text-emerald-700">มาเรียน {me.method === 'manual' ? '(ติวเตอร์เช็คให้)' : ''}</span>
 					{:else if s.is_open}
-						<a href="/checkin" class="btn btn-primary btn-sm">Check in</a>
+						<a href="/checkin" class="btn btn-primary btn-sm">เช็คชื่อ</a>
 					{:else}
-						<span class="badge bg-brand-50 text-brand-700">Absent</span>
+						<span class="badge bg-brand-50 text-brand-700">ขาด</span>
 					{/if}
 				</svelte:element>
 			</li>
@@ -134,18 +134,18 @@
 	</ul>
 {/if}
 
-<Modal bind:open title="Start check-in">
+<Modal bind:open title="เริ่มเช็คชื่อ">
 	<form id="start" onsubmit={start} class="space-y-5">
 		<div>
-			<label class="label" for="s-title">Session name</label>
+			<label class="label" for="s-title">ชื่อรอบเช็คชื่อ</label>
 			<input id="s-title" class="input" required maxlength="120" bind:value={f.title} />
 		</div>
 
 		<div class="rounded-2xl border border-line p-4">
 			<label class="flex items-center justify-between gap-3">
 				<span>
-					<span class="block">Require location</span>
-					<span class="text-sm text-muted">Only students near you can check in</span>
+					<span class="block">ต้องอยู่ในพื้นที่</span>
+					<span class="text-sm text-muted">เฉพาะนักเรียนที่อยู่ใกล้พี่เท่านั้นที่เช็คชื่อได้</span>
 				</span>
 				<input type="checkbox" class="h-5 w-5 accent-brand-600" bind:checked={f.require_location} />
 			</label>
@@ -154,16 +154,16 @@
 					<div class="flex items-center gap-3">
 						<MapPin size={18} class="text-brand-600" />
 						<span class="flex-1 text-sm">
-							{#if locating}Getting your location…
-							{:else if f.latitude !== null}Classroom set ({f.latitude.toFixed(5)}, {f.longitude?.toFixed(5)}) · ±{f.accuracy} m
-							{:else}Location not set{/if}
+							{#if locating}กำลังหาตำแหน่ง…
+							{:else if f.latitude !== null}ตั้งตำแหน่งห้องเรียนแล้ว ({f.latitude.toFixed(5)}, {f.longitude?.toFixed(5)}) · ±{f.accuracy} ม.
+							{:else}ยังไม่ได้ตั้งตำแหน่ง{/if}
 						</span>
 						<button type="button" class="btn btn-soft btn-sm" onclick={locate} disabled={locating}>
-							{#if locating}<LoaderCircle size={14} class="animate-spin" />{:else}<Crosshair size={14} />{/if} Use my location
+							{#if locating}<LoaderCircle size={14} class="animate-spin" />{:else}<Crosshair size={14} />{/if} ใช้ตำแหน่งปัจจุบัน
 						</button>
 					</div>
 					<div>
-						<label class="label flex justify-between" for="radius"><span>Allowed distance</span><span class="text-muted">{f.radius_m} m</span></label>
+						<label class="label flex justify-between" for="radius"><span>ระยะที่อนุญาต</span><span class="text-muted">{f.radius_m} ม.</span></label>
 						<input id="radius" type="range" min="30" max="500" step="10" class="w-full accent-brand-600" bind:value={f.radius_m} />
 					</div>
 				</div>
@@ -171,15 +171,15 @@
 		</div>
 
 		<div>
-			<label class="label flex justify-between" for="rot"><span>QR changes every</span><span class="text-muted">{f.rotate_seconds} s</span></label>
+			<label class="label flex justify-between" for="rot"><span>QR เปลี่ยนทุก</span><span class="text-muted">{f.rotate_seconds} วินาที</span></label>
 			<input id="rot" type="range" min="10" max="60" step="5" class="w-full accent-brand-600" bind:value={f.rotate_seconds} />
-			<p class="hint">Shorter is harder to share by screenshot. Scans are accepted for one extra cycle.</p>
+			<p class="hint">ยิ่งสั้นยิ่งแคปหน้าจอส่งต่อกันยาก ระบบยังรับการสแกน QR ของรอบก่อนหน้าได้อีก 1 รอบ</p>
 		</div>
 	</form>
 	{#snippet footer()}
-		<button class="btn btn-soft" onclick={() => (open = false)}>Cancel</button>
+		<button class="btn btn-soft" onclick={() => (open = false)}>ยกเลิก</button>
 		<button class="btn btn-primary" form="start" disabled={busy || locating}>
-			{#if busy}<LoaderCircle size={18} class="animate-spin" />{/if} Start & show QR
+			{#if busy}<LoaderCircle size={18} class="animate-spin" />{/if} เริ่มและแสดง QR
 		</button>
 	{/snippet}
 </Modal>

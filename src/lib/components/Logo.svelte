@@ -9,7 +9,7 @@
 	height={size * (105 / 90)}
 	class={klass}
 	role="img"
-	aria-label="Tutor More Academy"
+	aria-label="ติวเตอร์มอร์ อะคาเดมี"
 >
 	<rect x="1.5" y="1.5" width="87" height="102" rx="3" fill="#e11d2a" stroke="#111" stroke-width="3" />
 	<ellipse cx="45" cy="17" rx="38" ry="8.5" fill="#fff" stroke="#111" stroke-width="1" />

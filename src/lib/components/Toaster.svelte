@@ -18,7 +18,7 @@
 				<Info size={18} class="text-neutral-300" />
 			{/if}
 			<span>{t.message}</span>
-			<button class="rounded-full p-1 hover:bg-white/10" onclick={() => dismiss(t.id)} aria-label="Dismiss">
+			<button class="rounded-full p-1 hover:bg-white/10" onclick={() => dismiss(t.id)} aria-label="ปิด">
 				<X size={14} />
 			</button>
 		</div>

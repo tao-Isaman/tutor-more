@@ -37,7 +37,7 @@
 			</div>
 		{/if}
 		{#if cheapest !== null}
-			<span class="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1 text-sm shadow">From {formatBaht(cheapest)}</span>
+			<span class="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1 text-sm shadow">เริ่มต้น {formatBaht(cheapest)}</span>
 		{/if}
 	</div>
 	<div class="p-5">
@@ -46,9 +46,9 @@
 			<p class="mt-1 line-clamp-2 text-sm text-muted">{subject.description}</p>
 		{/if}
 		<div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
-			<span class="flex items-center gap-1.5"><BookOpen size={15} /> {openTerms.length} open term{openTerms.length === 1 ? '' : 's'}</span>
+			<span class="flex items-center gap-1.5"><BookOpen size={15} /> {openTerms.length} เทอมที่เปิด</span>
 			{#if next}
-				<span class="flex items-center gap-1.5"><CalendarDays size={15} /> Starts {formatDate(next.start_date)}</span>
+				<span class="flex items-center gap-1.5"><CalendarDays size={15} /> เริ่ม {formatDate(next.start_date)}</span>
 			{/if}
 		</div>
 	</div>

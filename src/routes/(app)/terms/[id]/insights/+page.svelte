@@ -42,36 +42,36 @@
 		v >= 90 ? 'bg-emerald-500 text-white' : v >= 50 ? 'bg-sun-300' : v > 0 ? 'bg-sun-100' : 'bg-neutral-100 text-neutral-400';
 </script>
 
-<svelte:head><title>Insights · {data.subject.title}</title></svelte:head>
+<svelte:head><title>สถิติการเรียน · {data.subject.title}</title></svelte:head>
 
 {#if data.contents.length === 0 || data.students.length === 0}
-	<EmptyState title="Not enough data yet" text="Insights appear once there are lessons and approved students.">
+	<EmptyState title="ยังมีข้อมูลไม่พอ" text="สถิติการเรียนจะแสดงเมื่อมีบทเรียนและนักเรียนที่อนุมัติแล้ว">
 		{#snippet icon()}<ChartColumn size={26} />{/snippet}
 	</EmptyState>
 {:else}
 	<div class="grid gap-4 sm:grid-cols-3">
-		<div class="card p-5"><div class="flex items-center gap-2 text-sm text-muted"><Users size={16} /> Students</div><div class="mt-1 text-3xl">{data.students.length}</div></div>
-		<div class="card p-5"><div class="flex items-center gap-2 text-sm text-muted"><Eye size={16} /> Class engagement</div><div class="mt-1 text-3xl">{classAvg}%</div></div>
+		<div class="card p-5"><div class="flex items-center gap-2 text-sm text-muted"><Users size={16} /> นักเรียน</div><div class="mt-1 text-3xl">{data.students.length}</div></div>
+		<div class="card p-5"><div class="flex items-center gap-2 text-sm text-muted"><Eye size={16} /> ความตั้งใจเรียนเฉลี่ย</div><div class="mt-1 text-3xl">{classAvg}%</div></div>
 		<div class="card p-5 {atRisk.length ? 'border-brand-200 bg-brand-50/50' : ''}">
-			<div class="flex items-center gap-2 text-sm text-muted"><TriangleAlert size={16} /> Falling behind (&lt;30%)</div>
+			<div class="flex items-center gap-2 text-sm text-muted"><TriangleAlert size={16} /> เรียนตามไม่ทัน (&lt;30%)</div>
 			<div class="mt-1 text-3xl {atRisk.length ? 'text-brand-600' : ''}">{atRisk.length}</div>
 		</div>
 	</div>
 
-	<h2 class="mt-10 mb-3 text-xl">Who watched what</h2>
-	<p class="mb-4 text-sm text-muted">Videos show % of unique seconds watched (re-watching doesn't count twice). Other lessons show whether they were opened.</p>
+	<h2 class="mt-10 mb-3 text-xl">ใครดูอะไรไปแล้วบ้าง</h2>
+	<p class="mb-4 text-sm text-muted">วิดีโอแสดงเป็น % ของเวลาที่ดูจริง (ดูซ้ำไม่นับเพิ่ม) ส่วนบทเรียนประเภทอื่นแสดงว่าเปิดดูแล้วหรือยัง</p>
 	<div class="overflow-x-auto rounded-2xl border border-line">
 		<table class="text-sm">
 			<thead>
 				<tr class="bg-neutral-50">
-					<th class="sticky left-0 z-10 min-w-56 bg-neutral-50 px-4 py-3 text-left font-normal text-muted">Student</th>
+					<th class="sticky left-0 z-10 min-w-56 bg-neutral-50 px-4 py-3 text-left font-normal text-muted">นักเรียน</th>
 					{#each perContent as { c, avg } (c.id)}
 						<th class="min-w-24 px-2 py-3 text-center align-bottom font-normal">
 							<a href="/terms/{data.term.id}/content/{c.id}" class="line-clamp-2 hover:text-brand-600" title={c.title}>{c.title}</a>
-							<div class="mt-1 text-xs text-muted">{#if c.type === 'video'}<Film size={11} class="inline" />{/if} avg {avg}%</div>
+							<div class="mt-1 text-xs text-muted">{#if c.type === 'video'}<Film size={11} class="inline" />{/if} เฉลี่ย {avg}%</div>
 						</th>
 					{/each}
-					<th class="min-w-24 px-3 py-3 font-normal text-muted">Overall</th>
+					<th class="min-w-24 px-3 py-3 font-normal text-muted">รวม</th>
 				</tr>
 			</thead>
 			<tbody class="divide-y divide-line">
@@ -82,7 +82,7 @@
 								<Avatar profile={s} size={30} />
 								<div class="min-w-0">
 									<div class="truncate">{displayName(s)}</div>
-									<div class="text-xs text-muted">{formatDuration(watched)} watched</div>
+									<div class="text-xs text-muted">ดูไปแล้ว {formatDuration(watched)}</div>
 								</div>
 							</div>
 						</td>
@@ -92,7 +92,7 @@
 							<td class="px-1 py-1 text-center">
 								<span
 									class="inline-flex h-8 w-full min-w-16 items-center justify-center rounded-lg text-xs {shade(v)}"
-									title={c.type === 'video' && r ? `${formatDuration(r.watched_seconds)} of ${formatDuration(r.duration_seconds)}` : r?.view_count ? `Opened ${r.view_count}×` : 'Not opened'}
+									title={c.type === 'video' && r ? `ดูแล้ว ${formatDuration(r.watched_seconds)} จาก ${formatDuration(r.duration_seconds)}` : r?.view_count ? `เปิดดู ${r.view_count} ครั้ง` : 'ยังไม่เปิดดู'}
 								>
 									{c.type === 'video' ? `${v}%` : v ? '✓' : '—'}
 								</span>

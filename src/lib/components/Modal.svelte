@@ -28,7 +28,7 @@
 	{#if open}
 		<div class="flex items-center justify-between border-b border-line px-6 py-4">
 			<h2 class="text-lg">{title}</h2>
-			<button class="btn-ghost -mr-2 rounded-full p-2" onclick={() => (open = false)} aria-label="Close">
+			<button class="btn-ghost -mr-2 rounded-full p-2" onclick={() => (open = false)} aria-label="ปิด">
 				<X size={20} />
 			</button>
 		</div>

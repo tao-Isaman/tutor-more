@@ -12,7 +12,18 @@
 		draft: 'bg-neutral-100 text-neutral-500',
 		published: 'bg-emerald-50 text-emerald-700'
 	};
-	const labels: Record<string, string> = { pending: 'Waiting approval' };
+	const labels: Record<string, string> = {
+		approved: 'อนุมัติแล้ว',
+		pending: 'รออนุมัติ',
+		rejected: 'ไม่อนุมัติ',
+		admin: 'แอดมิน',
+		tutor: 'ติวเตอร์',
+		student: 'นักเรียน',
+		open: 'เปิดอยู่',
+		closed: 'ปิดแล้ว',
+		draft: 'ฉบับร่าง',
+		published: 'เผยแพร่แล้ว'
+	};
 </script>
 
 <span class="badge {styles[status] ?? 'bg-neutral-100 text-neutral-600'}">

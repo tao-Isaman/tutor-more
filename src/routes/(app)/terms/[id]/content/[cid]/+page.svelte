@@ -45,7 +45,7 @@
 		{#if c.section}<div class="text-sm text-brand-600">{c.section}</div>{/if}
 		<h2 class="text-2xl md:text-3xl">{c.title}</h2>
 		{#if !c.is_published}
-			<p class="mt-2 inline-block rounded-full bg-neutral-100 px-3 py-1 text-sm text-muted">Hidden from students</p>
+			<p class="mt-2 inline-block rounded-full bg-neutral-100 px-3 py-1 text-sm text-muted">ซ่อนจากนักเรียนอยู่</p>
 		{/if}
 
 		<div class="mt-5">
@@ -62,12 +62,12 @@
 				{#if myWatched && !data.isStaff}
 					<div class="mt-3 flex items-center gap-3 text-sm text-muted">
 						{#if myWatched.completed}
-							<span class="flex items-center gap-1.5 text-emerald-700"><CircleCheck size={16} /> Completed</span>
+							<span class="flex items-center gap-1.5 text-emerald-700"><CircleCheck size={16} /> ดูจบแล้ว</span>
 						{:else}
 							<div class="h-1.5 w-40 overflow-hidden rounded-full bg-neutral-100">
 								<div class="h-full bg-brand-600" style="width:{percent(myWatched.watched_seconds, myWatched.duration_seconds)}%"></div>
 							</div>
-							Watched {percent(myWatched.watched_seconds, myWatched.duration_seconds)}%
+							ดูแล้ว {percent(myWatched.watched_seconds, myWatched.duration_seconds)}%
 						{/if}
 					</div>
 				{/if}
@@ -80,7 +80,7 @@
 						<div class="truncate">{c.file_name}</div>
 						<div class="text-sm text-muted">{formatBytes(c.size_bytes)}</div>
 					</div>
-					<span class="btn btn-soft btn-sm">Open</span>
+					<span class="btn btn-soft btn-sm">เปิด</span>
 				</a>
 			{:else if c.type === 'link' && c.external_url}
 				<a href={c.external_url} target="_blank" rel="noopener noreferrer" class="card flex items-center gap-4 p-5 hover:shadow-md">
@@ -117,10 +117,10 @@
 	<aside>
 		{#if data.viewers}
 			<div class="card sticky top-4 p-5">
-				<h3 class="flex items-center gap-2 text-lg"><Eye size={18} class="text-brand-600" /> Who has seen this</h3>
-				<p class="mt-1 text-sm text-muted">{seenCount} of {data.viewers.length} students opened it</p>
+				<h3 class="flex items-center gap-2 text-lg"><Eye size={18} class="text-brand-600" /> ใครดูแล้วบ้าง</h3>
+				<p class="mt-1 text-sm text-muted">เปิดดูแล้ว {seenCount} จาก {data.viewers.length} คน</p>
 				<div class="mt-4 flex gap-1 rounded-full bg-neutral-100 p-1 text-sm">
-					{#each [['all', 'All'], ['seen', 'Seen'], ['unseen', 'Not yet']] as [k, label] (k)}
+					{#each [['all', 'ทั้งหมด'], ['seen', 'ดูแล้ว'], ['unseen', 'ยังไม่ดู']] as [k, label] (k)}
 						<button
 							class="flex-1 rounded-full py-1.5 transition {viewerFilter === k ? 'bg-white shadow-sm' : 'text-muted'}"
 							onclick={() => (viewerFilter = k as typeof viewerFilter)}>{label}</button
@@ -144,24 +144,24 @@
 										<span class="text-xs text-muted">{formatDuration(v.progress.watched_seconds)}</span>
 									</div>
 								{:else if v.view}
-									<div class="text-xs text-muted">Opened {timeAgo(v.view.last_viewed_at)} · {v.view.view_count}×</div>
+									<div class="text-xs text-muted">เปิดดู {timeAgo(v.view.last_viewed_at)} · {v.view.view_count} ครั้ง</div>
 								{:else}
-									<div class="text-xs text-brand-600">Not opened yet</div>
+									<div class="text-xs text-brand-600">ยังไม่เปิดดู</div>
 								{/if}
 							</div>
 						</li>
 					{:else}
-						<li class="text-sm text-muted">No students here.</li>
+						<li class="text-sm text-muted">ยังไม่มีนักเรียน</li>
 					{/each}
 				</ul>
 			</div>
 		{:else}
 			<div class="card p-5 text-sm text-muted">
-				Stuck? Ask under the lesson, or <a href="/messages" class="text-brand-600 hover:underline">message your tutor</a> privately.
+				ติดตรงไหน? ถามไว้ใต้บทเรียนได้เลย หรือ<a href="/messages" class="text-brand-600 hover:underline">ทักแชทหาติวเตอร์</a>แบบส่วนตัวก็ได้
 			</div>
 		{/if}
 		{#if data.isStaff}
-			<a href="/terms/{data.term.id}" class="btn btn-soft mt-3 w-full"><Pencil size={16} /> Edit in lesson list</a>
+			<a href="/terms/{data.term.id}" class="btn btn-soft mt-3 w-full"><Pencil size={16} /> แก้ไขในรายการบทเรียน</a>
 		{/if}
 	</aside>
 </div>

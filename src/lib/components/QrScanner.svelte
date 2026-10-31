@@ -45,9 +45,9 @@
 				raf = requestAnimationFrame(tick);
 			})
 			.catch(() => {
-				error = 'Camera unavailable. Allow camera access, or scan the QR with your phone camera app.';
+				error = 'เปิดกล้องไม่ได้ กรุณาอนุญาตให้เข้าถึงกล้อง หรือสแกน QR ด้วยแอปกล้องของมือถือแทน';
 			});
-		if (!navigator.mediaDevices) error = 'This browser cannot open the camera.';
+		if (!navigator.mediaDevices) error = 'เบราว์เซอร์นี้เปิดกล้องไม่ได้';
 
 		return () => {
 			done = true;
@@ -66,6 +66,6 @@
 	{:else}
 		<video bind:this={video} playsinline muted class="h-full w-full object-cover"></video>
 		<div class="pointer-events-none absolute inset-[12%] rounded-3xl border-4 border-sun-400 shadow-[0_0_0_999px_rgba(0,0,0,0.35)]"></div>
-		<p class="absolute inset-x-0 bottom-4 text-center text-sm text-white">Point at the QR code on the tutor's screen</p>
+		<p class="absolute inset-x-0 bottom-4 text-center text-sm text-white">เล็งกล้องไปที่ QR code บนจอของติวเตอร์</p>
 	{/if}
 </div>

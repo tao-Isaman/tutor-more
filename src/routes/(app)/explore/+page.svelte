@@ -1,11 +1,13 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { Search, SearchX } from '@lucide/svelte';
 	import EmptyState from '#lib/components/EmptyState.svelte';
 	import SubjectCard from '#lib/components/SubjectCard.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
-	let q = $state('');
+	// Prefilled from the landing-page search box (/explore?q=…)
+	let q = $state(page.url.searchParams.get('q') ?? '');
 
 	const filtered = $derived.by(() => {
 		const s = q.trim().toLowerCase();
@@ -16,17 +18,17 @@
 	});
 </script>
 
-<svelte:head><title>Explore courses · Tutor More Academy</title></svelte:head>
+<svelte:head><title>ค้นหาคอร์ส · Tutor More Academy</title></svelte:head>
 
 <div class="mx-auto max-w-6xl px-5 py-8 md:px-10 md:py-10">
 	<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
 		<div>
-			<h1 class="text-3xl md:text-4xl">Explore courses</h1>
-			<p class="mt-1 text-muted">Find a subject, pick a term and request a seat.</p>
+			<h1 class="text-3xl md:text-4xl">ค้นหาคอร์ส</h1>
+			<p class="mt-1 text-muted">เลือกวิชา เลือกเทอม แล้วขอที่นั่งได้เลย</p>
 		</div>
 		<label class="relative w-full sm:w-80">
 			<Search size={18} class="absolute top-1/2 left-4 -translate-y-1/2 text-neutral-400" />
-			<input class="input rounded-full pl-11" placeholder="Search subjects…" bind:value={q} />
+			<input class="input rounded-full pl-11" placeholder="ค้นหาวิชา…" bind:value={q} />
 		</label>
 	</div>
 
@@ -39,8 +41,8 @@
 			</div>
 		{:else}
 			<EmptyState
-				title={q ? 'No matches' : 'No courses open yet'}
-				text={q ? 'Try a different keyword.' : 'New terms are announced soon — check back later.'}
+				title={q ? 'ไม่พบวิชาที่ค้นหา' : 'ยังไม่มีคอร์สที่เปิด'}
+				text={q ? 'ลองใช้คำค้นอื่นดูนะ' : 'เทอมใหม่จะประกาศเร็ว ๆ นี้ — แวะกลับมาดูอีกครั้งนะ'}
 			>
 				{#snippet icon()}<SearchX size={26} />{/snippet}
 			</EmptyState>

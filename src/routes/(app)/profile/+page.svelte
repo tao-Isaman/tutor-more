@@ -27,28 +27,28 @@
 	let checklistOpen = $state(false);
 
 	const checklist = $derived([
-		{ done: !!p.avatar_url, label: 'Add a profile photo' },
-		{ done: !!p.nickname, label: 'Set your nickname' },
-		{ done: !!p.education_level, label: 'Choose education level' },
-		{ done: !!p.school, label: 'Add your school / faculty' },
-		{ done: !!p.bio, label: 'Write a short bio' },
-		{ done: !!(data.contacts?.phone || data.contacts?.line_id), label: 'Add phone or LINE' }
+		{ done: !!p.avatar_url, label: 'เพิ่มรูปโปรไฟล์' },
+		{ done: !!p.nickname, label: 'ตั้งชื่อเล่น' },
+		{ done: !!p.education_level, label: 'เลือกระดับการศึกษา' },
+		{ done: !!p.school, label: 'เพิ่มโรงเรียน / คณะ' },
+		{ done: !!p.bio, label: 'เขียนแนะนำตัวสั้น ๆ' },
+		{ done: !!(data.contacts?.phone || data.contacts?.line_id), label: 'เพิ่มเบอร์โทรหรือ LINE' }
 	]);
 	const doneCount = $derived(checklist.filter((c) => c.done).length);
 
 	const stats = $derived(
 		staff
 			? [
-					{ value: data.stats.subjects, label: 'Subjects' },
-					{ value: data.stats.students, label: 'Students' },
-					{ value: data.stats.questions, label: 'Answers' },
-					{ value: p.role === 'admin' ? 'Admin' : 'Tutor', label: 'Role' }
+					{ value: data.stats.subjects, label: 'วิชา' },
+					{ value: data.stats.students, label: 'นักเรียน' },
+					{ value: data.stats.questions, label: 'คำตอบ' },
+					{ value: p.role === 'admin' ? 'แอดมิน' : 'ติวเตอร์', label: 'บทบาท' }
 				]
 			: [
-					{ value: data.classes.length, label: 'Classes' },
-					{ value: data.stats.attended, label: 'Check-ins' },
-					{ value: data.stats.completed, label: 'Videos done' },
-					{ value: data.stats.questions, label: 'Questions' }
+					{ value: data.classes.length, label: 'คลาส' },
+					{ value: data.stats.attended, label: 'เช็คชื่อ' },
+					{ value: data.stats.completed, label: 'ดูวิดีโอจบ' },
+					{ value: data.stats.questions, label: 'คำถาม' }
 				]
 	);
 
@@ -57,12 +57,12 @@
 	);
 
 	async function share() {
-		const text = `${fullName(p)} on Tutor More Academy`;
+		const text = `${fullName(p)} บน Tutor More Academy`;
 		const url = `${location.origin}/explore`;
 		if (navigator.share) await navigator.share({ title: text, url }).catch(() => {});
 		else {
 			await navigator.clipboard.writeText(url);
-			toast('Link copied');
+			toast('คัดลอกลิงก์แล้ว');
 		}
 	}
 </script>
@@ -70,7 +70,7 @@
 <svelte:head><title>{fullName(p)} · Tutor More Academy</title></svelte:head>
 
 <div class="mx-auto max-w-[1400px] px-5 py-8 md:px-14 md:py-10">
-	<p class="text-muted">Your profile</p>
+	<p class="text-muted">โปรไฟล์ของคุณ</p>
 
 	<div class="mt-6 grid gap-10 xl:grid-cols-[1fr_minmax(0,820px)]">
 		<!-- Left: identity (Fastwork-style) -->
@@ -79,19 +79,19 @@
 			<div class="min-w-0 flex-1">
 				<h1 class="text-3xl font-medium md:text-[40px] md:leading-tight">{fullName(p)}</h1>
 				<div class="mt-2 flex flex-wrap items-center gap-2 text-muted">
-					<span>@{p.nickname || 'nickname'}</span>
+					<span>@{p.nickname || 'ชื่อเล่น'}</span>
 					<StatusBadge status={p.role} />
 				</div>
 				{#if p.bio}
 					<p class="mt-3 max-w-xl text-[17px] leading-relaxed text-neutral-600">{p.bio}</p>
 				{:else}
-					<a href="/settings" class="mt-3 inline-block text-neutral-400 hover:text-brand-600">+ Add a short bio</a>
+					<a href="/settings" class="mt-3 inline-block text-neutral-400 hover:text-brand-600">+ เพิ่มแนะนำตัวสั้น ๆ</a>
 				{/if}
 				<ul class="mt-4 space-y-2 text-neutral-600">
 					{#if p.school}<li class="flex items-center gap-2"><Briefcase size={18} strokeWidth={1.6} /> {p.school}</li>{/if}
 					<li class="flex items-center gap-2">
 						<GraduationCap size={18} strokeWidth={1.6} />
-						{#if p.education_level}{EDUCATION_LABEL[p.education_level]}{:else}<a href="/settings" class="text-neutral-400 hover:text-brand-600">Add education</a>{/if}
+						{#if p.education_level}{EDUCATION_LABEL[p.education_level]}{:else}<a href="/settings" class="text-neutral-400 hover:text-brand-600">เพิ่มระดับการศึกษา</a>{/if}
 					</li>
 				</ul>
 
@@ -105,8 +105,8 @@
 				</div>
 
 				<div class="mt-6 flex flex-wrap gap-3">
-					<a href="/settings" class="btn btn-dark px-6 py-3"><Pencil size={18} /> Edit profile</a>
-					<button class="btn btn-soft px-6 py-3" onclick={share}><Share2 size={18} /> Invite friends</button>
+					<a href="/settings" class="btn btn-dark px-6 py-3"><Pencil size={18} /> แก้ไขโปรไฟล์</a>
+					<button class="btn btn-soft px-6 py-3" onclick={share}><Share2 size={18} /> ชวนเพื่อน</button>
 				</div>
 			</div>
 		</section>
@@ -118,9 +118,9 @@
 				<div class="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-brand-700"></div>
 				<div class="relative text-center">
 					<div class="text-sun-300">Tutor More Academy</div>
-					<div class="mt-1 text-3xl font-medium text-white md:text-4xl">{staff ? 'Teaching' : 'Learning'} with Tutor More</div>
+					<div class="mt-1 text-3xl font-medium text-white md:text-4xl">{staff ? 'สอน' : 'เรียน'}กับ Tutor More</div>
 					<a href={staff ? '/teach' : '/explore'} class="btn mt-5 bg-white/15 text-white hover:bg-white/25">
-						{staff ? 'Manage classes' : 'Find a class'}
+						{staff ? 'จัดการคลาส' : 'หาคลาสเรียน'}
 					</a>
 				</div>
 			</div>
@@ -137,15 +137,15 @@
 
 	<!-- Tabs -->
 	<nav class="mt-12 flex gap-10 border-b border-line px-1">
-		<button class="tab {tab === 'classes' ? 'tab-active' : ''}" onclick={() => (tab = 'classes')}>{staff ? 'Teaching' : 'Classes'}</button>
-		<button class="tab {tab === 'about' ? 'tab-active' : ''}" onclick={() => (tab = 'about')}>About</button>
+		<button class="tab {tab === 'classes' ? 'tab-active' : ''}" onclick={() => (tab = 'classes')}>{staff ? 'การสอน' : 'คลาส'}</button>
+		<button class="tab {tab === 'about' ? 'tab-active' : ''}" onclick={() => (tab = 'about')}>เกี่ยวกับ</button>
 	</nav>
 
 	<div class="py-8">
 		{#if tab === 'classes'}
 			{@const items = staff
 				? data.subjects.map((s) => ({ href: `/subjects/${s.id}`, title: s.title, sub: s.title_th ?? s.code ?? '' }))
-				: data.classes.map((c) => ({ href: `/terms/${c.term!.id}`, title: c.term!.subject?.title ?? '', sub: `Term ${c.term!.name}` }))}
+				: data.classes.map((c) => ({ href: `/terms/${c.term!.id}`, title: c.term!.subject?.title ?? '', sub: `เทอม ${c.term!.name}` }))}
 			{#if items.length}
 				<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 					{#each items as it (it.href)}
@@ -160,21 +160,21 @@
 					{/each}
 				</div>
 			{:else}
-				<EmptyState title={staff ? 'No subjects yet' : 'No classes yet'} text={staff ? 'Subjects you teach appear here.' : 'Classes you join appear here.'}>
-					<a href={staff ? '/teach' : '/explore'} class="btn btn-primary">{staff ? 'Go to Teach' : 'Explore courses'}</a>
+				<EmptyState title={staff ? 'ยังไม่มีวิชา' : 'ยังไม่มีคลาส'} text={staff ? 'วิชาที่คุณสอนจะแสดงที่นี่' : 'คลาสที่คุณเข้าร่วมจะแสดงที่นี่'}>
+					<a href={staff ? '/teach' : '/explore'} class="btn btn-primary">{staff ? 'ไปที่หน้าการสอน' : 'ค้นหาคอร์ส'}</a>
 				</EmptyState>
 			{/if}
 		{:else}
 			<dl class="grid max-w-2xl gap-x-8 gap-y-5 sm:grid-cols-2">
-				<div><dt class="text-sm text-muted">Full name</dt><dd>{fullName(p)}</dd></div>
-				<div><dt class="text-sm text-muted">Nickname</dt><dd>{p.nickname || '—'}</dd></div>
-				<div><dt class="text-sm text-muted">Email</dt><dd>{data.contacts?.email ?? '—'}</dd></div>
-				<div><dt class="text-sm text-muted">Phone</dt><dd class="flex items-center gap-2"><Phone size={14} /> {data.contacts?.phone || '—'}</dd></div>
+				<div><dt class="text-sm text-muted">ชื่อ-นามสกุล</dt><dd>{fullName(p)}</dd></div>
+				<div><dt class="text-sm text-muted">ชื่อเล่น</dt><dd>{p.nickname || '—'}</dd></div>
+				<div><dt class="text-sm text-muted">อีเมล</dt><dd>{data.contacts?.email ?? '—'}</dd></div>
+				<div><dt class="text-sm text-muted">เบอร์โทร</dt><dd class="flex items-center gap-2"><Phone size={14} /> {data.contacts?.phone || '—'}</dd></div>
 				<div><dt class="text-sm text-muted">LINE</dt><dd class="flex items-center gap-2"><MessageCircle size={14} /> {data.contacts?.line_id || '—'}</dd></div>
 				<div><dt class="text-sm text-muted">Facebook</dt><dd class="flex items-center gap-2"><Globe size={14} /> {data.contacts?.facebook || '—'}</dd></div>
 				<div><dt class="text-sm text-muted">Instagram</dt><dd class="flex items-center gap-2"><AtSign size={14} /> {data.contacts?.instagram ? '@' + data.contacts.instagram : '—'}</dd></div>
 			</dl>
-			<p class="mt-6 text-sm text-muted">Contact details are only visible to you, your tutors and admins.</p>
+			<p class="mt-6 text-sm text-muted">ข้อมูลติดต่อจะเห็นได้เฉพาะคุณ ติวเตอร์ของคุณ และแอดมินเท่านั้น</p>
 		{/if}
 	</div>
 </div>
@@ -190,7 +190,7 @@
 						{c.label}
 					</li>
 				{/each}
-				<li><a href="/settings" class="btn btn-sun btn-sm mt-2 w-full">Complete now</a></li>
+				<li><a href="/settings" class="btn btn-sun btn-sm mt-2 w-full">กรอกเลย</a></li>
 			</ul>
 		{/if}
 		<button
@@ -199,8 +199,8 @@
 		>
 			<ProgressRing value={(doneCount / checklist.length) * 100} size={46} label="{doneCount}/{checklist.length}" />
 			<span class="flex-1">
-				<span class="block text-[17px]">Finish your profile</span>
-				<span class="block text-sm text-white/60">Help your tutor get to know you</span>
+				<span class="block text-[17px]">กรอกโปรไฟล์ให้ครบ</span>
+				<span class="block text-sm text-white/60">ช่วยให้ติวเตอร์รู้จักคุณมากขึ้น</span>
 			</span>
 			<ChevronUp size={20} class="transition {checklistOpen ? '' : 'rotate-180'}" />
 		</button>

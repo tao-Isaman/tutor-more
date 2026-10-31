@@ -15,8 +15,8 @@
 </script>
 
 <svelte:head>
-	<title>Tutor More Academy</title>
-	<meta name="description" content="Tutor More Academy — engineering tutoring for SUT students. Lessons, attendance and Q&A in one place." />
+	<title>ติวเตอร์มอร์ อะคาเดมี | Tutor More Academy</title>
+	<meta name="description" content="ติวเตอร์มอร์ อะคาเดมี สถาบันกวดวิชาวิศวกรรมสำหรับนักศึกษา มทส. รวมบทเรียน วิดีโอ เช็คชื่อ และถาม-ตอบไว้ในที่เดียว" />
 </svelte:head>
 
 <Toaster />

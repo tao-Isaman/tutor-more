@@ -5,7 +5,7 @@ import type { PageLoad } from './$types';
 export const load: PageLoad = async ({ parent, params, depends }) => {
 	depends('app:students');
 	const { supabase, isStaff } = await parent();
-	if (!isStaff) error(403, 'Tutors only');
+	if (!isStaff) error(403, 'เฉพาะติวเตอร์เท่านั้น');
 
 	const { data: rows } = await supabase
 		.from('enrollments')

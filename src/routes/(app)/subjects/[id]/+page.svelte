@@ -30,17 +30,17 @@
 			.insert({ term_id: joinTerm.id, student_id: data.user.id, message: joinMessage.trim() || null });
 		busy = false;
 		if (error) {
-			toast.error(error.code === '23505' ? 'You already requested this term' : errorMessage(error));
+			toast.error(error.code === '23505' ? 'คุณส่งคำขอเข้าเรียนเทอมนี้ไปแล้ว' : errorMessage(error));
 			return;
 		}
-		toast('Request sent! Your tutor will review it soon.');
+		toast('ส่งคำขอแล้ว! ติวเตอร์จะตรวจสอบให้เร็ว ๆ นี้');
 		joinTerm = null;
 		joinMessage = '';
 		await invalidate('app:subject');
 	}
 
 	async function cancelRequest(termId: string) {
-		if (!data.user || !confirm('Cancel your enrollment request?')) return;
+		if (!data.user || !confirm('ยกเลิกคำขอเข้าเรียนใช่ไหม?')) return;
 		const { error } = await data.supabase
 			.from('enrollments')
 			.delete()
@@ -48,7 +48,7 @@
 			.eq('student_id', data.user.id)
 			.eq('status', 'pending');
 		if (error) return toast.error(errorMessage(error));
-		toast('Request cancelled');
+		toast('ยกเลิกคำขอแล้ว');
 		await invalidate('app:subject');
 	}
 
@@ -79,8 +79,8 @@
 			</div>
 			{#if data.isStaff}
 				<div class="flex gap-2">
-					<button class="btn bg-white/15 text-white hover:bg-white/25" onclick={() => (editOpen = true)}><Pencil size={16} /> Edit</button>
-					<button class="btn btn-sun" onclick={() => (termOpen = true)}><Plus size={16} /> New term</button>
+					<button class="btn bg-white/15 text-white hover:bg-white/25" onclick={() => (editOpen = true)}><Pencil size={16} /> แก้ไข</button>
+					<button class="btn btn-sun" onclick={() => (termOpen = true)}><Plus size={16} /> เพิ่มเทอม</button>
 				</div>
 			{/if}
 		</div>
@@ -89,19 +89,19 @@
 	<div class="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
 		<div class="space-y-8">
 			{#if !s.is_published}
-				<div class="rounded-2xl bg-neutral-100 px-5 py-3 text-muted">Draft — only tutors and admins can see this subject.</div>
+				<div class="rounded-2xl bg-neutral-100 px-5 py-3 text-muted">ฉบับร่าง — เฉพาะติวเตอร์และแอดมินเท่านั้นที่เห็นวิชานี้</div>
 			{/if}
 			{#if s.description}
 				<section>
-					<h2 class="mb-2 text-xl">About this course</h2>
+					<h2 class="mb-2 text-xl">เกี่ยวกับคอร์สนี้</h2>
 					<Markdown source={s.description} />
 				</section>
 			{/if}
 
 			<section>
-				<h2 class="mb-4 text-xl">Terms</h2>
+				<h2 class="mb-4 text-xl">เทอม</h2>
 				{#if s.terms.length === 0}
-					<p class="text-muted">No terms yet.</p>
+					<p class="text-muted">ยังไม่มีเทอม</p>
 				{/if}
 				<div class="space-y-4">
 					{#each s.terms as t (t.id)}
@@ -112,7 +112,7 @@
 							<div class="flex flex-wrap items-start justify-between gap-3">
 								<div>
 									<div class="flex items-center gap-2">
-										<h3 class="text-xl">Term {t.name}</h3>
+										<h3 class="text-xl">เทอม {t.name}</h3>
 										{#if !t.is_published}<StatusBadge status="draft" />{/if}
 									</div>
 									<div class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
@@ -120,7 +120,7 @@
 											<span class="flex items-center gap-1.5"><CalendarDays size={15} /> {formatDate(t.start_date)} – {formatDate(t.end_date)}</span>
 										{/if}
 										{#if t.capacity}
-											<span class="flex items-center gap-1.5"><Users size={15} /> {seat?.approved ?? 0}/{t.capacity} seats</span>
+											<span class="flex items-center gap-1.5"><Users size={15} /> {seat?.approved ?? 0}/{t.capacity} ที่นั่ง</span>
 										{/if}
 									</div>
 								</div>
@@ -135,18 +135,18 @@
 
 							<div class="mt-5 flex flex-wrap items-center gap-2">
 								{#if data.isStaff}
-									<a href="/terms/{t.id}" class="btn btn-dark">Open class</a>
+									<a href="/terms/{t.id}" class="btn btn-dark">เข้าห้องเรียน</a>
 								{:else if status === 'approved'}
-									<a href="/terms/{t.id}" class="btn btn-primary">Go to class</a>
+									<a href="/terms/{t.id}" class="btn btn-primary">เข้าห้องเรียน</a>
 								{:else if status === 'pending'}
 									<StatusBadge status="pending" />
-									<button class="btn btn-ghost btn-sm" onclick={() => cancelRequest(t.id)}>Cancel request</button>
+									<button class="btn btn-ghost btn-sm" onclick={() => cancelRequest(t.id)}>ยกเลิกคำขอ</button>
 								{:else if status === 'rejected'}
-									<span class="text-sm text-muted">Your request was not approved. Message the tutor for details.</span>
+									<span class="text-sm text-muted">คำขอของคุณไม่ได้รับการอนุมัติ ทักติวเตอร์เพื่อสอบถามรายละเอียดได้</span>
 								{:else if full}
-									<span class="badge bg-neutral-100 text-muted">Full</span>
+									<span class="badge bg-neutral-100 text-muted">เต็มแล้ว</span>
 								{:else if t.is_published}
-									<button class="btn btn-primary" onclick={() => startJoin(t)}>Request to join</button>
+									<button class="btn btn-primary" onclick={() => startJoin(t)}>ขอเข้าเรียน</button>
 								{/if}
 							</div>
 						</article>
@@ -156,7 +156,7 @@
 		</div>
 
 		<aside class="space-y-4">
-			<h2 class="text-xl">Tutors</h2>
+			<h2 class="text-xl">ติวเตอร์</h2>
 			{#each tutors as tutor (tutor.id)}
 				<div class="card flex items-start gap-4 p-5">
 					<Avatar profile={tutor} size={56} />
@@ -168,35 +168,35 @@
 					</div>
 				</div>
 			{:else}
-				<p class="text-muted">Tutors will be announced soon.</p>
+				<p class="text-muted">จะประกาศรายชื่อติวเตอร์เร็ว ๆ นี้</p>
 			{/each}
 		</aside>
 	</div>
 </div>
 
-<Modal bind:open={() => joinTerm !== null, (v) => !v && (joinTerm = null)} title="Request to join · Term {joinTerm?.name ?? ''}">
+<Modal bind:open={() => joinTerm !== null, (v) => !v && (joinTerm = null)} title="ขอเข้าเรียน · เทอม {joinTerm?.name ?? ''}">
 	<div class="space-y-4">
 		<div class="rounded-2xl bg-sun-50 p-4 text-sm">
 			<div class="text-base">{s.title} · {formatBaht(joinTerm?.price)}</div>
 			<p class="mt-1 text-muted">
-				Your tutor will confirm your seat (and payment, if any). You'll get access to lessons as soon as you're approved.
+				ติวเตอร์จะยืนยันที่นั่ง (และการชำระเงิน ถ้ามี) ให้ คุณจะเข้าถึงบทเรียนได้ทันทีที่ได้รับอนุมัติ
 			</p>
 		</div>
 		<div>
-			<label class="label" for="msg">Message to tutor <span class="text-muted">(optional)</span></label>
-			<textarea id="msg" class="input min-h-24" maxlength="500" placeholder="e.g. Transferred ฿2,000 at 14:05 from KBank" bind:value={joinMessage}></textarea>
+			<label class="label" for="msg">ข้อความถึงติวเตอร์ <span class="text-muted">(ไม่บังคับ)</span></label>
+			<textarea id="msg" class="input min-h-24" maxlength="500" placeholder="เช่น โอน ฿2,000 เวลา 14:05 จากกสิกรไทย" bind:value={joinMessage}></textarea>
 		</div>
 	</div>
 	{#snippet footer()}
-		<button class="btn btn-soft" onclick={() => (joinTerm = null)}>Cancel</button>
+		<button class="btn btn-soft" onclick={() => (joinTerm = null)}>ยกเลิก</button>
 		<button class="btn btn-primary" disabled={busy} onclick={requestJoin}>
-			{#if busy}<LoaderCircle size={18} class="animate-spin" />{/if} Send request
+			{#if busy}<LoaderCircle size={18} class="animate-spin" />{/if} ส่งคำขอ
 		</button>
 	{/snippet}
 </Modal>
 
 {#if data.isStaff && data.user}
-	<Modal bind:open={editOpen} title="Edit subject">
+	<Modal bind:open={editOpen} title="แก้ไขวิชา">
 		<SubjectForm
 			supabase={data.supabase}
 			userId={data.user.id}
@@ -207,7 +207,7 @@
 			}}
 		/>
 	</Modal>
-	<Modal bind:open={termOpen} title="New term">
+	<Modal bind:open={termOpen} title="เพิ่มเทอม">
 		<TermForm
 			supabase={data.supabase}
 			subjectId={s.id}

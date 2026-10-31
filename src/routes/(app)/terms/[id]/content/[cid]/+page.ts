@@ -12,7 +12,7 @@ export const load: PageLoad = async ({ parent, params, depends }) => {
 		.eq('id', params.cid)
 		.eq('term_id', params.id)
 		.maybeSingle();
-	if (!content) error(404, 'Lesson not found');
+	if (!content) error(404, 'ไม่พบบทเรียนนี้');
 
 	const [signed, progress, siblings, comments, audience] = await Promise.all([
 		content.storage_path

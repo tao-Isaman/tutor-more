@@ -25,11 +25,11 @@
 	} = $props();
 
 	const types: { value: Enums<'content_type'>; label: string; icon: typeof Film; accept?: string }[] = [
-		{ value: 'video', label: 'Video', icon: Film, accept: 'video/*' },
-		{ value: 'text', label: 'Text', icon: FileText },
-		{ value: 'image', label: 'Image', icon: Image, accept: 'image/*' },
-		{ value: 'file', label: 'File', icon: Paperclip, accept: '' },
-		{ value: 'link', label: 'Link', icon: Link }
+		{ value: 'video', label: 'วิดีโอ', icon: Film, accept: 'video/*' },
+		{ value: 'text', label: 'บทความ', icon: FileText },
+		{ value: 'image', label: 'รูปภาพ', icon: Image, accept: 'image/*' },
+		{ value: 'file', label: 'ไฟล์', icon: Paperclip, accept: '' },
+		{ value: 'link', label: 'ลิงก์', icon: Link }
 	];
 
 	// The form is re-mounted per record, so reading props once is intended.
@@ -53,7 +53,7 @@
 	function pick(e: Event) {
 		const picked = (e.currentTarget as HTMLInputElement).files?.[0] ?? null;
 		if (picked && picked.size > MAX_BYTES) {
-			toast.error('File is larger than 5 GB');
+			toast.error('ไฟล์มีขนาดเกิน 5 GB');
 			return;
 		}
 		file = picked;
@@ -62,8 +62,8 @@
 
 	async function save(e: SubmitEvent) {
 		e.preventDefault();
-		if (needsFile && !file && !content?.storage_path) return toast.error('Please choose a file to upload');
-		if (f.type === 'link' && !/^https?:\/\//i.test(f.external_url)) return toast.error('Link must start with http:// or https://');
+		if (needsFile && !file && !content?.storage_path) return toast.error('กรุณาเลือกไฟล์ที่จะอัปโหลด');
+		if (f.type === 'link' && !/^https?:\/\//i.test(f.external_url)) return toast.error('ลิงก์ต้องขึ้นต้นด้วย http:// หรือ https://');
 		busy = true;
 		progress = 0;
 
@@ -102,7 +102,7 @@
 			if (content?.storage_path && upload.storage_path) {
 				await supabase.storage.from('course-media').remove([content.storage_path]);
 			}
-			toast(content ? 'Lesson updated' : 'Lesson added');
+			toast(content ? 'บันทึกบทเรียนแล้ว' : 'เพิ่มบทเรียนแล้ว');
 			onsaved();
 		} catch (err) {
 			toast.error(errorMessage(err));
@@ -135,12 +135,12 @@
 
 	<div class="grid grid-cols-[1fr_160px] gap-3">
 		<div>
-			<label class="label" for="c-title">Title</label>
-			<input id="c-title" class="input" required maxlength="200" placeholder="Lesson 1 · Force vectors" bind:value={f.title} />
+			<label class="label" for="c-title">ชื่อบทเรียน</label>
+			<input id="c-title" class="input" required maxlength="200" placeholder="บทเรียนที่ 1 · เวกเตอร์ของแรง" bind:value={f.title} />
 		</div>
 		<div>
-			<label class="label" for="c-sec">Chapter</label>
-			<input id="c-sec" class="input" list="sections" maxlength="120" placeholder="Chapter 1" bind:value={f.section} />
+			<label class="label" for="c-sec">บท</label>
+			<input id="c-sec" class="input" list="sections" maxlength="120" placeholder="บทที่ 1" bind:value={f.section} />
 			<datalist id="sections">
 				{#each sections as s (s)}<option value={s}></option>{/each}
 			</datalist>
@@ -155,10 +155,10 @@
 				<span class="text-sm text-muted">{formatBytes(file.size)}</span>
 			{:else if content?.file_name}
 				<span>{content.file_name}</span>
-				<span class="text-sm text-muted">Choose a new file to replace it</span>
+				<span class="text-sm text-muted">เลือกไฟล์ใหม่เพื่อแทนที่ไฟล์เดิม</span>
 			{:else}
-				<span>Choose {current.label.toLowerCase()} to upload</span>
-				<span class="text-sm text-muted">Up to 5 GB · uploads resume if the connection drops</span>
+				<span>เลือก{current.label}ที่จะอัปโหลด</span>
+				<span class="text-sm text-muted">สูงสุด 5 GB · ถ้าเน็ตหลุด ระบบจะอัปโหลดต่อจากเดิมให้</span>
 			{/if}
 			<input type="file" accept={current.accept} class="sr-only" onchange={pick} />
 		</label>
@@ -166,31 +166,31 @@
 
 	{#if f.type === 'link'}
 		<div>
-			<label class="label" for="c-url">URL</label>
+			<label class="label" for="c-url">ลิงก์ (URL)</label>
 			<input id="c-url" class="input" type="url" required placeholder="https://" bind:value={f.external_url} />
 		</div>
 	{/if}
 
 	<div>
-		<label class="label" for="c-body">{f.type === 'text' ? 'Content' : 'Notes'} <span class="text-muted">(Markdown supported)</span></label>
+		<label class="label" for="c-body">{f.type === 'text' ? 'เนื้อหา' : 'โน้ต'} <span class="text-muted">(รองรับ Markdown)</span></label>
 		<textarea
 			id="c-body"
 			class="input font-read {f.type === 'text' ? 'min-h-64' : 'min-h-24'}"
 			maxlength="100000"
 			required={f.type === 'text'}
-			placeholder={f.type === 'text' ? '# Heading\n\nWrite the lesson here. **bold**, *italic*, - lists, [links](https://…)' : 'Optional description shown under the lesson'}
+			placeholder={f.type === 'text' ? '# หัวข้อ\n\nเขียนเนื้อหาบทเรียนที่นี่ **ตัวหนา**, *ตัวเอียง*, - รายการ, [ลิงก์](https://…)' : 'คำอธิบายเพิ่มเติมที่แสดงใต้บทเรียน (ไม่บังคับ)'}
 			bind:value={f.body}
 		></textarea>
 	</div>
 
 	<label class="flex items-center gap-3">
 		<input type="checkbox" class="h-5 w-5 accent-brand-600" bind:checked={f.is_published} />
-		<span>Visible to students</span>
+		<span>นักเรียนมองเห็น</span>
 	</label>
 
 	{#if busy && needsFile && file}
 		<div>
-			<div class="mb-1 flex justify-between text-sm"><span>Uploading…</span><span>{progress}%</span></div>
+			<div class="mb-1 flex justify-between text-sm"><span>กำลังอัปโหลด…</span><span>{progress}%</span></div>
 			<div class="h-2 overflow-hidden rounded-full bg-neutral-100">
 				<div class="h-full rounded-full bg-brand-600 transition-all" style="width:{progress}%"></div>
 			</div>
@@ -199,6 +199,6 @@
 
 	<button class="btn btn-primary w-full" disabled={busy}>
 		{#if busy}<LoaderCircle size={18} class="animate-spin" />{/if}
-		{content ? 'Save changes' : 'Add lesson'}
+		{content ? 'บันทึก' : 'เพิ่มบทเรียน'}
 	</button>
 </form>

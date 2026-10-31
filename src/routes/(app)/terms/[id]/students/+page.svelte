@@ -32,15 +32,15 @@
 		const { error } = await data.supabase.from('enrollments').update({ status }).eq('id', id);
 		busyId = null;
 		if (error) return toast.error(errorMessage(error));
-		toast(status === 'approved' ? 'Student approved' : 'Request declined');
+		toast(status === 'approved' ? 'อนุมัตินักเรียนแล้ว' : 'ปฏิเสธคำขอแล้ว');
 		await invalidate('app:students');
 	}
 
 	async function removeStudent(id: string, name: string) {
-		if (!confirm(`Remove ${name} from this class? They will lose access to lessons.`)) return;
+		if (!confirm(`นำ ${name} ออกจากคลาสนี้ใช่ไหม? น้องจะเข้าดูบทเรียนไม่ได้อีก`)) return;
 		const { error } = await data.supabase.from('enrollments').delete().eq('id', id);
 		if (error) return toast.error(errorMessage(error));
-		toast('Student removed');
+		toast('นำนักเรียนออกแล้ว');
 		await invalidate('app:students');
 	}
 
@@ -52,7 +52,7 @@
 
 	function exportCsv() {
 		const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-		const header = ['First name', 'Last name', 'Nickname', 'Education', 'School', 'Phone', 'LINE', 'Facebook', 'Instagram', 'Email', 'Attendance'];
+		const header = ['ชื่อ', 'นามสกุล', 'ชื่อเล่น', 'ระดับการศึกษา', 'สถานศึกษา', 'เบอร์โทร', 'LINE', 'Facebook', 'Instagram', 'อีเมล', 'เช็คชื่อ'];
 		const lines = data.enrollments
 			.filter((e) => e.status === 'approved')
 			.map((e) => {
@@ -68,19 +68,19 @@
 		const blob = new Blob(['﻿' + [header.map(esc).join(','), ...lines].join('\n')], { type: 'text/csv;charset=utf-8' });
 		const a = document.createElement('a');
 		a.href = URL.createObjectURL(blob);
-		a.download = `${data.subject.title} ${data.term.name} students.csv`;
+		a.download = `${data.subject.title} ${data.term.name} รายชื่อนักเรียน.csv`;
 		a.click();
 		URL.revokeObjectURL(a.href);
 	}
 </script>
 
-<svelte:head><title>Students · {data.subject.title}</title></svelte:head>
+<svelte:head><title>นักเรียน · {data.subject.title}</title></svelte:head>
 
 {#if pending.length}
 	<section class="mb-10">
-		<h2 class="mb-1 text-xl">Waiting for approval <span class="text-muted">({pending.length})</span></h2>
+		<h2 class="mb-1 text-xl">รออนุมัติ <span class="text-muted">({pending.length})</span></h2>
 		<p class="mb-4 text-sm text-muted">
-			Check payment, then approve.{#if seatsLeft !== null} {seatsLeft} seat{seatsLeft === 1 ? '' : 's'} left.{/if}
+			ตรวจสอบการชำระเงินก่อน แล้วค่อยกดอนุมัติ{#if seatsLeft !== null} · เหลือ {seatsLeft} ที่นั่ง{/if}
 		</p>
 		<ul class="space-y-3">
 			{#each pending as e (e.id)}
@@ -98,9 +98,9 @@
 						</div>
 					</div>
 					<div class="flex gap-2">
-						<button class="btn btn-soft btn-sm" onclick={() => message(e.student_id)} aria-label="Message"><MessageCircle size={16} /></button>
-						<button class="btn btn-danger btn-sm" disabled={busyId === e.id} onclick={() => decide(e.id, 'rejected')}><X size={16} /> Decline</button>
-						<button class="btn btn-primary btn-sm" disabled={busyId === e.id || seatsLeft === 0} onclick={() => decide(e.id, 'approved')}><Check size={16} /> Approve</button>
+						<button class="btn btn-soft btn-sm" onclick={() => message(e.student_id)} aria-label="ส่งข้อความ"><MessageCircle size={16} /></button>
+						<button class="btn btn-danger btn-sm" disabled={busyId === e.id} onclick={() => decide(e.id, 'rejected')}><X size={16} /> ปฏิเสธ</button>
+						<button class="btn btn-primary btn-sm" disabled={busyId === e.id || seatsLeft === 0} onclick={() => decide(e.id, 'approved')}><Check size={16} /> อนุมัติ</button>
 					</div>
 				</li>
 			{/each}
@@ -110,26 +110,26 @@
 
 <section>
 	<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-		<h2 class="text-xl">Class roster <span class="text-muted">({data.enrollments.filter((e) => e.status === 'approved').length}{data.term.capacity ? `/${data.term.capacity}` : ''})</span></h2>
+		<h2 class="text-xl">รายชื่อนักเรียน <span class="text-muted">({data.enrollments.filter((e) => e.status === 'approved').length}{data.term.capacity ? `/${data.term.capacity}` : ''})</span></h2>
 		<div class="flex gap-2">
 			<label class="relative">
 				<Search size={16} class="absolute top-1/2 left-3 -translate-y-1/2 text-neutral-400" />
-				<input class="input rounded-full py-2 pl-9 text-sm" placeholder="Search…" bind:value={q} />
+				<input class="input rounded-full py-2 pl-9 text-sm" placeholder="ค้นหา…" bind:value={q} />
 			</label>
 			<button class="btn btn-outline btn-sm" onclick={exportCsv}><Download size={16} /> CSV</button>
 		</div>
 	</div>
 
 	{#if approved.length === 0}
-		<EmptyState title={q ? 'No matches' : 'No students yet'} text={q ? '' : 'Approved students will appear here.'} />
+		<EmptyState title={q ? 'ไม่พบผลลัพธ์' : 'ยังไม่มีนักเรียน'} text={q ? '' : 'นักเรียนที่อนุมัติแล้วจะแสดงที่นี่'} />
 	{:else}
 		<div class="overflow-x-auto rounded-2xl border border-line">
 			<table class="w-full min-w-[720px] text-left">
 				<thead class="bg-neutral-50 text-sm text-muted">
 					<tr>
-						<th class="px-4 py-3 font-normal">Student</th>
-						<th class="px-4 py-3 font-normal">Contact</th>
-						<th class="px-4 py-3 font-normal">Attendance</th>
+						<th class="px-4 py-3 font-normal">นักเรียน</th>
+						<th class="px-4 py-3 font-normal">ช่องทางติดต่อ</th>
+						<th class="px-4 py-3 font-normal">เช็คชื่อ</th>
 						<th class="px-4 py-3"></th>
 					</tr>
 				</thead>
@@ -163,8 +163,8 @@
 								</div>
 							</td>
 							<td class="px-4 py-3 text-right whitespace-nowrap">
-								<button class="btn btn-soft btn-sm" onclick={() => message(e.student_id)}><MessageCircle size={15} /> Chat</button>
-								<button class="btn btn-ghost btn-sm text-brand-600" aria-label="Remove" onclick={() => removeStudent(e.id, fullName(e.student))}><UserX size={15} /></button>
+								<button class="btn btn-soft btn-sm" onclick={() => message(e.student_id)}><MessageCircle size={15} /> แชท</button>
+								<button class="btn btn-ghost btn-sm text-brand-600" aria-label="นำออก" onclick={() => removeStudent(e.id, fullName(e.student))}><UserX size={15} /></button>
 							</td>
 						</tr>
 					{/each}
@@ -176,12 +176,12 @@
 
 {#if rejected.length}
 	<section class="mt-10">
-		<h2 class="mb-3 text-lg text-muted">Declined</h2>
+		<h2 class="mb-3 text-lg text-muted">ปฏิเสธแล้ว</h2>
 		<ul class="flex flex-wrap gap-2">
 			{#each rejected as e (e.id)}
 				<li class="chip text-sm">
 					{fullName(e.student)} <StatusBadge status="rejected" />
-					<button class="text-brand-600 hover:underline" onclick={() => decide(e.id, 'approved')}>Approve</button>
+					<button class="text-brand-600 hover:underline" onclick={() => decide(e.id, 'approved')}>อนุมัติ</button>
 				</li>
 			{/each}
 		</ul>

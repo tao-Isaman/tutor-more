@@ -23,7 +23,7 @@
 		const { error: err } = await data.supabase.auth.signInWithPassword({ email: email.trim(), password });
 		busy = false;
 		if (err) {
-			error = err.message === 'Invalid login credentials' ? 'Wrong email or password' : errorMessage(err);
+			error = errorMessage(err);
 			return;
 		}
 		await invalidate('supabase:auth');
@@ -32,41 +32,41 @@
 
 	async function forgot() {
 		if (!email.trim()) {
-			error = 'Enter your email first, then click "Forgot password"';
+			error = 'กรอกอีเมลก่อน แล้วกด "ลืมรหัสผ่าน?"';
 			return;
 		}
 		const { error: err } = await data.supabase.auth.resetPasswordForEmail(email.trim(), {
 			redirectTo: `${page.url.origin}/auth/callback?next=/settings%3Ftab%3Dsecurity`
 		});
 		if (err) toast.error(errorMessage(err));
-		else toast('Password reset link sent — check your email');
+		else toast('ส่งลิงก์ตั้งรหัสผ่านใหม่แล้ว กรุณาเช็คอีเมล');
 	}
 </script>
 
-<svelte:head><title>Log in · Tutor More Academy</title></svelte:head>
+<svelte:head><title>เข้าสู่ระบบ · ติวเตอร์มอร์</title></svelte:head>
 
-<AuthShell title="Welcome back" subtitle="Log in to continue to your classes.">
+<AuthShell title="ยินดีต้อนรับกลับมา" subtitle="เข้าสู่ระบบเพื่อเข้าห้องเรียนของคุณ">
 	{#if page.url.searchParams.get('next')?.startsWith('/checkin')}
-		<div class="mb-6 rounded-2xl bg-sun-50 p-4 text-sm text-sun-600">Log in to finish checking in to class.</div>
+		<div class="mb-6 rounded-2xl bg-sun-50 p-4 text-sm text-sun-600">เข้าสู่ระบบก่อน แล้วระบบจะเช็คชื่อเข้าเรียนให้ต่อทันที</div>
 	{/if}
 	<form onsubmit={submit} class="space-y-4">
 		<div>
-			<label class="label" for="email">Email</label>
+			<label class="label" for="email">อีเมล</label>
 			<input id="email" class="input" type="email" autocomplete="email" required bind:value={email} />
 		</div>
 		<div>
 			<div class="flex items-center justify-between">
-				<label class="label" for="password">Password</label>
-				<button type="button" class="mb-1.5 text-sm text-brand-600 hover:underline" onclick={forgot}>Forgot password?</button>
+				<label class="label" for="password">รหัสผ่าน</label>
+				<button type="button" class="mb-1.5 text-sm text-brand-600 hover:underline" onclick={forgot}>ลืมรหัสผ่าน?</button>
 			</div>
 			<input id="password" class="input" type="password" autocomplete="current-password" required bind:value={password} />
 		</div>
 		{#if error}<p class="text-sm text-brand-700">{error}</p>{/if}
 		<button class="btn btn-primary w-full py-3" disabled={busy}>
-			{#if busy}<LoaderCircle size={18} class="animate-spin" />{/if} Log in
+			{#if busy}<LoaderCircle size={18} class="animate-spin" />{/if} เข้าสู่ระบบ
 		</button>
 	</form>
 	<p class="mt-6 text-center text-muted">
-		New to Tutor More? <a href="/register{page.url.search}" class="text-brand-600 hover:underline">Create an account</a>
+		ยังไม่มีบัญชี? <a href="/register{page.url.search}" class="text-brand-600 hover:underline">สมัครสมาชิก</a>
 	</p>
 </AuthShell>

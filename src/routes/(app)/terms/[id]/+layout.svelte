@@ -7,14 +7,14 @@
 
 	const base = $derived(`/terms/${data.term.id}`);
 	const tabs = $derived([
-		{ href: base, label: 'Lessons', exact: true },
-		{ href: `${base}/announcements`, label: 'Announcements' },
-		{ href: `${base}/attendance`, label: 'Attendance' },
+		{ href: base, label: 'บทเรียน', exact: true },
+		{ href: `${base}/announcements`, label: 'ประกาศ' },
+		{ href: `${base}/attendance`, label: 'เช็คชื่อ' },
 		...(data.isStaff
 			? [
-					{ href: `${base}/students`, label: 'Students' },
-					{ href: `${base}/insights`, label: 'Insights' },
-					{ href: `${base}/settings`, label: 'Settings' }
+					{ href: `${base}/students`, label: 'นักเรียน' },
+					{ href: `${base}/insights`, label: 'สถิติการเรียน' },
+					{ href: `${base}/settings`, label: 'ตั้งค่า' }
 				]
 			: [])
 	]);
@@ -38,7 +38,7 @@
 				<h1 class="text-2xl md:text-3xl">{data.subject.title} <span class="text-muted">· {data.term.name}</span></h1>
 				{#if data.subject.title_th}<p class="text-muted">{data.subject.title_th}</p>{/if}
 			</div>
-			{#if data.isStaff}<span class="badge bg-brand-50 text-brand-700">You teach this class</span>{/if}
+			{#if data.isStaff}<span class="badge bg-brand-50 text-brand-700">พี่สอนคลาสนี้</span>{/if}
 		</div>
 
 		<nav class="scrollbar-none mt-6 flex gap-7 overflow-x-auto border-b border-line">

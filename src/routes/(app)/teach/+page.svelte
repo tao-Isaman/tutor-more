@@ -16,25 +16,25 @@
 	async function decide(id: string, status: 'approved' | 'rejected') {
 		const { error } = await data.supabase.from('enrollments').update({ status }).eq('id', id);
 		if (error) return toast.error(errorMessage(error));
-		toast(status === 'approved' ? 'Approved' : 'Declined');
+		toast(status === 'approved' ? 'อนุมัติแล้ว' : 'ปฏิเสธแล้ว');
 		await invalidate('app:teach');
 	}
 </script>
 
-<svelte:head><title>Teach · Tutor More Academy</title></svelte:head>
+<svelte:head><title>การสอน · Tutor More Academy</title></svelte:head>
 
 <div class="mx-auto max-w-6xl px-5 py-8 md:px-10 md:py-10">
 	<div class="flex flex-wrap items-end justify-between gap-3">
 		<div>
-			<h1 class="text-3xl md:text-4xl">Teach</h1>
-			<p class="mt-1 text-muted">Your subjects, terms and enrollment requests.</p>
+			<h1 class="text-3xl md:text-4xl">การสอน</h1>
+			<p class="mt-1 text-muted">วิชา เทอม และคำขอเข้าเรียนของคุณ</p>
 		</div>
-		<button class="btn btn-primary" onclick={() => (newOpen = true)}><Plus size={18} /> New subject</button>
+		<button class="btn btn-primary" onclick={() => (newOpen = true)}><Plus size={18} /> เพิ่มวิชา</button>
 	</div>
 
 	{#if data.pending.length}
 		<section class="mt-8">
-			<h2 class="mb-3 text-xl">Enrollment requests <span class="text-muted">({data.pending.length})</span></h2>
+			<h2 class="mb-3 text-xl">คำขอเข้าเรียน <span class="text-muted">({data.pending.length})</span></h2>
 			<ul class="divide-y divide-line overflow-hidden rounded-2xl border border-line">
 				{#each data.pending as e (e.id)}
 					<li class="flex flex-col gap-3 bg-white p-4 sm:flex-row sm:items-center">
@@ -47,9 +47,9 @@
 							</div>
 						</div>
 						<div class="flex gap-2">
-							<a href="/terms/{e.term_id}/students" class="btn btn-ghost btn-sm">Details</a>
+							<a href="/terms/{e.term_id}/students" class="btn btn-ghost btn-sm">รายละเอียด</a>
 							<button class="btn btn-danger btn-sm" onclick={() => decide(e.id, 'rejected')}><X size={15} /></button>
-							<button class="btn btn-primary btn-sm" onclick={() => decide(e.id, 'approved')}><Check size={15} /> Approve</button>
+							<button class="btn btn-primary btn-sm" onclick={() => decide(e.id, 'approved')}><Check size={15} /> อนุมัติ</button>
 						</div>
 					</li>
 				{/each}
@@ -58,11 +58,11 @@
 	{/if}
 
 	<section class="mt-10">
-		<h2 class="mb-4 text-xl">Subjects</h2>
+		<h2 class="mb-4 text-xl">วิชา</h2>
 		{#if data.subjects.length === 0}
-			<EmptyState title="No subjects yet" text="Create your first subject, then add a term (e.g. 2/2569) to open enrollment.">
+			<EmptyState title="ยังไม่มีวิชา" text="สร้างวิชาแรกของคุณ แล้วเพิ่มเทอม (เช่น 2/2569) เพื่อเปิดรับนักเรียน">
 				{#snippet icon()}<BookOpen size={26} />{/snippet}
-				<button class="btn btn-primary" onclick={() => (newOpen = true)}><Plus size={18} /> New subject</button>
+				<button class="btn btn-primary" onclick={() => (newOpen = true)}><Plus size={18} /> เพิ่มวิชา</button>
 			</EmptyState>
 		{/if}
 		<div class="grid gap-5 md:grid-cols-2">
@@ -82,7 +82,7 @@
 						{#each s.terms as t (t.id)}
 							<li>
 								<a href="/terms/{t.id}" class="flex items-center justify-between px-5 py-3 hover:bg-neutral-50">
-									<span>Term {t.name}</span>
+									<span>เทอม {t.name}</span>
 									<span class="flex items-center gap-2 text-sm text-muted">
 										{#if !t.is_published}<StatusBadge status="draft" />{/if}
 										<ChevronRight size={16} />
@@ -91,7 +91,7 @@
 							</li>
 						{:else}
 							<li class="px-5 py-3 text-sm text-muted">
-								No terms yet — <a href="/subjects/{s.id}" class="text-brand-600 hover:underline">add one</a>
+								ยังไม่มีเทอม — <a href="/subjects/{s.id}" class="text-brand-600 hover:underline">เพิ่มเทอม</a>
 							</li>
 						{/each}
 					</ul>
@@ -101,7 +101,7 @@
 	</section>
 </div>
 
-<Modal bind:open={newOpen} title="New subject">
+<Modal bind:open={newOpen} title="เพิ่มวิชา">
 	<SubjectForm
 		supabase={data.supabase}
 		userId={data.user!.id}

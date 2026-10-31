@@ -3,6 +3,7 @@
 	import { FileText, Film, Image, Link, LoaderCircle, Paperclip, UploadCloud } from '@lucide/svelte';
 	import type { Database, Enums, Tables } from '#lib/database.types.ts';
 	import { toast } from '#lib/toast.svelte.ts';
+	import { optimiseImage } from '#lib/image.ts';
 	import { readVideoDuration, safeFileName, uploadResumable } from '#lib/upload.ts';
 	import { errorMessage, formatBytes } from '#lib/utils.ts';
 
@@ -43,6 +44,8 @@
 		is_published: content?.is_published ?? true
 	});
 	let file = $state<File | null>(null);
+	let originalBytes = $state<number | null>(null);
+	let optimising = $state(false);
 	let progress = $state(0);
 	let busy = $state(false);
 
@@ -50,13 +53,29 @@
 	const needsFile = $derived(['video', 'image', 'file'].includes(f.type));
 	const MAX_BYTES = 5 * 1024 * 1024 * 1024;
 
-	function pick(e: Event) {
+	async function pick(e: Event) {
 		const picked = (e.currentTarget as HTMLInputElement).files?.[0] ?? null;
 		if (picked && picked.size > MAX_BYTES) {
 			toast.error('ไฟล์มีขนาดเกิน 5 GB');
 			return;
 		}
-		file = picked;
+		originalBytes = null;
+		if (picked && f.type === 'image') {
+			// Shrink lesson images before upload (WebP, max 2400px) — keeps diagrams readable
+			optimising = true;
+			try {
+				const img = await optimiseImage(picked, 'lesson');
+				file = img.file;
+				if (!img.unchanged) originalBytes = img.originalBytes;
+			} catch (err) {
+				toast.error(errorMessage(err));
+				file = null;
+			} finally {
+				optimising = false;
+			}
+		} else {
+			file = picked;
+		}
 		if (file && !f.title) f.title = file.name.replace(/\.[^.]+$/, '');
 	}
 
@@ -121,6 +140,7 @@
 					onclick={() => {
 						f.type = t.value;
 						file = null;
+						originalBytes = null;
 					}}
 					class="flex flex-col items-center gap-1 rounded-2xl border py-3 text-sm transition {f.type === t.value
 						? 'border-brand-500 bg-brand-50 text-brand-700'
@@ -150,9 +170,18 @@
 	{#if needsFile}
 		<label class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-line bg-neutral-50 px-4 py-8 text-center hover:border-brand-300">
 			<UploadCloud class="text-brand-600" />
-			{#if file}
+			{#if optimising}
+				<span>กำลังย่อขนาดรูป…</span>
+			{:else if file}
 				<span>{file.name}</span>
-				<span class="text-sm text-muted">{formatBytes(file.size)}</span>
+				<span class="text-sm text-muted">
+					{#if originalBytes}
+						<span class="line-through">{formatBytes(originalBytes)}</span> →
+						<span class="text-success-700">{formatBytes(file.size)}</span> (WebP)
+					{:else}
+						{formatBytes(file.size)}
+					{/if}
+				</span>
 			{:else if content?.file_name}
 				<span>{content.file_name}</span>
 				<span class="text-sm text-muted">เลือกไฟล์ใหม่เพื่อแทนที่ไฟล์เดิม</span>
@@ -197,7 +226,7 @@
 		</div>
 	{/if}
 
-	<button class="btn btn-primary w-full" disabled={busy}>
+	<button class="btn btn-primary w-full" disabled={busy || optimising}>
 		{#if busy}<LoaderCircle size={18} class="animate-spin" />{/if}
 		{content ? 'บันทึก' : 'เพิ่มบทเรียน'}
 	</button>

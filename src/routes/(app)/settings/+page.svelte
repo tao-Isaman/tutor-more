@@ -5,7 +5,8 @@
 	import Avatar from '#lib/components/Avatar.svelte';
 	import type { Enums } from '#lib/database.types.ts';
 	import { toast } from '#lib/toast.svelte.ts';
-	import { errorMessage } from '#lib/utils.ts';
+	import { optimiseImage, savingsText } from '#lib/image.ts';
+	import { errorMessage, formatBytes } from '#lib/utils.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -32,23 +33,39 @@
 	let uploading = $state(false);
 
 	async function uploadAvatar(e: Event) {
-		const file = (e.currentTarget as HTMLInputElement).files?.[0];
-		if (!file) return;
-		if (!file.type.startsWith('image/')) return toast.error('กรุณาเลือกไฟล์รูปภาพ');
-		if (file.size > 3 * 1024 * 1024) return toast.error('รูปต้องมีขนาดไม่เกิน 3 MB');
+		const input = e.currentTarget as HTMLInputElement;
+		const picked = input.files?.[0];
+		input.value = '';
+		if (!picked) return;
 		uploading = true;
-		const path = `${p.id}/avatar-${Date.now()}.${file.name.split('.').pop()}`;
-		const { error } = await data.supabase.storage.from('avatars').upload(path, file, { cacheControl: '31536000' });
-		if (error) {
+		try {
+			const img = await optimiseImage(picked, 'avatar');
+			const ext = img.file.name.split('.').pop();
+			const path = `${p.id}/avatar-${Date.now()}.${ext}`;
+			const { error } = await data.supabase.storage
+				.from('avatars')
+				.upload(path, img.file, { cacheControl: '31536000', contentType: img.file.type });
+			if (error) throw error;
+
+			const url = data.supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+			const previous = p.avatar_url;
+			const { error: err2 } = await data.supabase.from('profiles').update({ avatar_url: url }).eq('id', p.id);
+			if (err2) throw err2;
+
+			// Remove the replaced photo so old avatars don't pile up in storage
+			const marker = '/storage/v1/object/public/avatars/';
+			if (previous?.includes(marker)) {
+				const oldPath = decodeURIComponent(previous.split(marker)[1].split('?')[0]);
+				if (oldPath.startsWith(`${p.id}/`)) await data.supabase.storage.from('avatars').remove([oldPath]);
+			}
+
+			toast(savingsText(img, formatBytes) ?? 'อัปเดตรูปแล้ว');
+			await invalidate('supabase:auth');
+		} catch (err) {
+			toast.error(errorMessage(err));
+		} finally {
 			uploading = false;
-			return toast.error(errorMessage(error));
 		}
-		const url = data.supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl;
-		const { error: err2 } = await data.supabase.from('profiles').update({ avatar_url: url }).eq('id', p.id);
-		uploading = false;
-		if (err2) return toast.error(errorMessage(err2));
-		toast('อัปเดตรูปแล้ว');
-		await invalidate('supabase:auth');
 	}
 
 	async function saveProfile(e: SubmitEvent) {
@@ -119,7 +136,7 @@
 				</label>
 				<div>
 					<div class="text-lg">รูปโปรไฟล์</div>
-					<div class="text-sm text-muted">ช่วยให้ติวเตอร์จำคุณได้ตอนเช็คชื่อ ไฟล์ JPG/PNG ไม่เกิน 3 MB</div>
+					<div class="text-sm text-muted">ช่วยให้ติวเตอร์จำคุณได้ตอนเช็คชื่อ ระบบจะครอปเป็นสี่เหลี่ยมและย่อขนาดให้อัตโนมัติ</div>
 				</div>
 			</div>
 

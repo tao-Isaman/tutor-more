@@ -3,7 +3,8 @@
 	import { ImagePlus, LoaderCircle } from '@lucide/svelte';
 	import type { Database, Tables } from '#lib/database.types.ts';
 	import { toast } from '#lib/toast.svelte.ts';
-	import { errorMessage } from '#lib/utils.ts';
+	import { optimiseImage, savingsText } from '#lib/image.ts';
+	import { errorMessage, formatBytes } from '#lib/utils.ts';
 
 	let {
 		supabase,
@@ -31,16 +32,27 @@
 	let uploading = $state(false);
 
 	async function uploadCover(e: Event) {
-		const file = (e.currentTarget as HTMLInputElement).files?.[0];
-		if (!file) return;
-		if (!file.type.startsWith('image/')) return toast.error('กรุณาเลือกไฟล์รูปภาพ');
-		if (file.size > 5 * 1024 * 1024) return toast.error('รูปปกต้องมีขนาดไม่เกิน 5 MB');
+		const input = e.currentTarget as HTMLInputElement;
+		const picked = input.files?.[0];
+		input.value = '';
+		if (!picked) return;
 		uploading = true;
-		const path = `${userId}/covers/${crypto.randomUUID()}.${file.name.split('.').pop()}`;
-		const { error } = await supabase.storage.from('avatars').upload(path, file, { cacheControl: '31536000' });
-		uploading = false;
-		if (error) return toast.error(errorMessage(error));
-		f.cover_url = supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+		try {
+			const img = await optimiseImage(picked, 'cover');
+			const ext = img.file.name.split('.').pop();
+			const path = `${userId}/covers/${crypto.randomUUID()}.${ext}`;
+			const { error } = await supabase.storage
+				.from('avatars')
+				.upload(path, img.file, { cacheControl: '31536000', contentType: img.file.type });
+			if (error) throw error;
+			f.cover_url = supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+			const saved = savingsText(img, formatBytes);
+			if (saved) toast.info(saved);
+		} catch (err) {
+			toast.error(errorMessage(err));
+		} finally {
+			uploading = false;
+		}
 	}
 
 	async function save(e: SubmitEvent) {

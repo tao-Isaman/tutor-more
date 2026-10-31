@@ -82,7 +82,7 @@
 {:else}
 	<div class="mb-8 grid gap-4 sm:grid-cols-3">
 		<div class="card flex items-center gap-4 p-5">
-			<ProgressRing value={percent(presentCount, closedCount)} size={56} stroke={6} track="#f1f1f1" color="#e11d2a" label="{percent(presentCount, closedCount)}%" />
+			<ProgressRing value={percent(presentCount, closedCount)} size={56} stroke={6} track="var(--color-line)" color="var(--color-brand-600)" label="{percent(presentCount, closedCount)}%" />
 			<div><div class="text-sm text-muted">เช็คชื่อ</div><div class="text-xl">{presentCount}/{closedCount} คาบ</div></div>
 		</div>
 		<a href="/checkin" class="card flex items-center gap-4 bg-sun-400 p-5 hover:bg-sun-300 sm:col-span-2">
@@ -122,7 +122,7 @@
 							<StatusBadge status={s.is_open ? 'open' : 'closed'} />
 						</div>
 					{:else if me}
-						<span class="badge bg-emerald-50 text-emerald-700">มาเรียน {me.method === 'manual' ? '(ติวเตอร์เช็คให้)' : ''}</span>
+						<span class="badge bg-success-50 text-success-700">มาเรียน {me.method === 'manual' ? '(ติวเตอร์เช็คให้)' : ''}</span>
 					{:else if s.is_open}
 						<a href="/checkin" class="btn btn-primary btn-sm">เช็คชื่อ</a>
 					{:else}

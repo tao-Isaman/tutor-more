@@ -104,7 +104,7 @@
 					</div>
 					<div class="min-w-0 md:pb-2">
 						<div class="flex flex-wrap items-center gap-2">
-							<h1 class="text-2xl font-medium md:text-3xl">{fullName(p)}</h1>
+							<h1 class="page-title">{fullName(p)}</h1>
 							<StatusBadge status={p.role} />
 						</div>
 						<p class="mt-1 text-muted">
@@ -127,7 +127,7 @@
 			{#if doneCount < checklist.length}
 				<section class="card p-5">
 					<div class="flex items-center justify-between">
-						<h2 class="text-lg">กรอกโปรไฟล์ให้ครบ</h2>
+						<h2 class="card-title">กรอกโปรไฟล์ให้ครบ</h2>
 						<span class="text-sm text-muted">{doneCount}/{checklist.length}</span>
 					</div>
 					<div class="mt-3 h-2 overflow-hidden rounded-full bg-neutral-100">
@@ -136,7 +136,7 @@
 					<ul class="mt-4 space-y-2.5 text-sm">
 						{#each checklist as c (c.label)}
 							<li class="flex items-center gap-2.5 {c.done ? 'text-muted line-through' : ''}">
-								<span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full {c.done ? 'bg-emerald-500 text-white' : 'border border-neutral-300'}">
+								<span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full {c.done ? 'bg-success-500 text-white' : 'border border-neutral-300'}">
 									{#if c.done}<Check size={12} strokeWidth={3} />{/if}
 								</span>
 								{c.label}
@@ -148,33 +148,33 @@
 			{/if}
 
 			<section class="card p-5">
-				<h2 class="text-lg">เกี่ยวกับ</h2>
+				<h2 class="card-title">เกี่ยวกับ</h2>
 				{#if p.bio}
-					<p class="mt-2 font-read leading-relaxed text-neutral-700">{p.bio}</p>
+					<p class="mt-2 font-read leading-relaxed text-neutral-800">{p.bio}</p>
 				{:else}
-					<a href="/settings" class="mt-2 inline-block text-sm text-neutral-400 hover:text-brand-600">+ เพิ่มแนะนำตัวสั้น ๆ</a>
+					<a href="/settings" class="mt-2 inline-block text-sm text-subtle hover:text-brand-600">+ เพิ่มแนะนำตัวสั้น ๆ</a>
 				{/if}
 				<ul class="mt-4 space-y-3 border-t border-line pt-4 text-sm">
 					<li class="flex items-center gap-3">
 						<GraduationCap size={18} strokeWidth={1.6} class="shrink-0 text-muted" />
-						{#if p.education_level}{EDUCATION_LABEL[p.education_level]}{:else}<a href="/settings" class="text-neutral-400 hover:text-brand-600">เพิ่มระดับการศึกษา</a>{/if}
+						{#if p.education_level}{EDUCATION_LABEL[p.education_level]}{:else}<a href="/settings" class="text-subtle hover:text-brand-600">เพิ่มระดับการศึกษา</a>{/if}
 					</li>
 					<li class="flex items-center gap-3">
 						<Briefcase size={18} strokeWidth={1.6} class="shrink-0 text-muted" />
-						{#if p.school}{p.school}{:else}<a href="/settings" class="text-neutral-400 hover:text-brand-600">เพิ่มโรงเรียน / คณะ</a>{/if}
+						{#if p.school}{p.school}{:else}<a href="/settings" class="text-subtle hover:text-brand-600">เพิ่มโรงเรียน / คณะ</a>{/if}
 					</li>
 				</ul>
 			</section>
 
 			<section class="card p-5">
-				<h2 class="text-lg">ช่องทางติดต่อ</h2>
+				<h2 class="card-title">ช่องทางติดต่อ</h2>
 				<ul class="mt-3 space-y-3 text-sm">
 					{#each contacts as c (c.label)}
 						<li class="flex items-center gap-3">
-							<span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-600"><c.icon size={15} /></span>
+							<span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-muted"><c.icon size={15} /></span>
 							<div class="min-w-0">
 								<div class="text-xs text-muted">{c.label}</div>
-								<div class="truncate {c.value ? '' : 'text-neutral-400'}">{c.value || 'ยังไม่ได้ระบุ'}</div>
+								<div class="truncate {c.value ? '' : 'text-subtle'}">{c.value || 'ยังไม่ได้ระบุ'}</div>
 							</div>
 						</li>
 					{/each}
@@ -197,7 +197,7 @@
 
 			<section class="card p-5 md:p-6">
 				<div class="mb-4 flex items-center justify-between">
-					<h2 class="text-lg">{staff ? 'วิชาที่สอน' : 'คลาสของฉัน'}</h2>
+					<h2 class="card-title">{staff ? 'วิชาที่สอน' : 'คลาสของฉัน'}</h2>
 					<a href={staff ? '/teach' : '/explore'} class="text-sm text-muted hover:text-ink">{staff ? 'จัดการคลาส' : 'หาคลาสเพิ่ม'}</a>
 				</div>
 				{#if items.length}

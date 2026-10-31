@@ -93,13 +93,13 @@
 			{/if}
 			{#if s.description}
 				<section>
-					<h2 class="mb-2 text-xl">เกี่ยวกับคอร์สนี้</h2>
+					<h2 class="section-title mb-2">เกี่ยวกับคอร์สนี้</h2>
 					<Markdown source={s.description} />
 				</section>
 			{/if}
 
 			<section>
-				<h2 class="mb-4 text-xl">เทอม</h2>
+				<h2 class="section-title mb-4">เทอม</h2>
 				{#if s.terms.length === 0}
 					<p class="text-muted">ยังไม่มีเทอม</p>
 				{/if}
@@ -137,7 +137,7 @@
 								{#if data.isStaff}
 									<a href="/terms/{t.id}" class="btn btn-dark">เข้าห้องเรียน</a>
 								{:else if status === 'approved'}
-									<a href="/terms/{t.id}" class="btn btn-primary">เข้าห้องเรียน</a>
+									<a href="/terms/{t.id}" class="btn btn-dark">เข้าห้องเรียน</a>
 								{:else if status === 'pending'}
 									<StatusBadge status="pending" />
 									<button class="btn btn-ghost btn-sm" onclick={() => cancelRequest(t.id)}>ยกเลิกคำขอ</button>
@@ -156,7 +156,7 @@
 		</div>
 
 		<aside class="space-y-4">
-			<h2 class="text-xl">ติวเตอร์</h2>
+			<h2 class="section-title">ติวเตอร์</h2>
 			{#each tutors as tutor (tutor.id)}
 				<div class="card flex items-start gap-4 p-5">
 					<Avatar profile={tutor} size={56} />

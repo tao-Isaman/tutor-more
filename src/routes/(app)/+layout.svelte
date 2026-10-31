@@ -80,7 +80,7 @@
 				<a
 					href={item.href}
 					class="group relative flex w-[84px] flex-col items-center gap-1 rounded-2xl px-1 py-2.5 text-center text-[13px] leading-tight transition
-						{active(item.href) ? 'bg-white font-normal text-brand-600 shadow-sm' : 'text-neutral-600 hover:bg-white/70 hover:text-ink'}"
+						{active(item.href) ? 'bg-white font-normal text-brand-600 shadow-sm' : 'text-muted hover:bg-white/70 hover:text-ink'}"
 				>
 					<item.icon size={24} strokeWidth={1.6} />
 					{item.label}
@@ -97,14 +97,14 @@
 			<a
 				href="/settings"
 				class="flex w-[84px] flex-col items-center gap-1 rounded-2xl px-1 py-2.5 text-center text-[13px] leading-tight transition
-					{active('/settings') ? 'bg-white text-brand-600 shadow-sm' : 'text-neutral-600 hover:bg-white/70'}"
+					{active('/settings') ? 'bg-white text-brand-600 shadow-sm' : 'text-muted hover:bg-white/70'}"
 			>
 				<Settings size={24} strokeWidth={1.6} />
 				ตั้งค่า
 			</a>
 			<button
 				onclick={logout}
-				class="mt-1 flex w-[84px] flex-col items-center gap-1 rounded-2xl px-1 py-2.5 text-center text-[13px] leading-tight text-neutral-500 transition hover:bg-white/70 hover:text-brand-600"
+				class="mt-1 flex w-[84px] flex-col items-center gap-1 rounded-2xl px-1 py-2.5 text-center text-[13px] leading-tight text-muted transition hover:bg-white/70 hover:text-brand-600"
 			>
 				<LogOut size={22} strokeWidth={1.6} />
 				ออกจากระบบ
@@ -144,7 +144,7 @@
 					href={item.href}
 					class="relative flex min-w-14 flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[11px] {active(item.href)
 						? 'text-brand-600'
-						: 'text-neutral-500'}"
+						: 'text-muted'}"
 				>
 					<item.icon size={22} strokeWidth={1.7} />
 					{item.label}

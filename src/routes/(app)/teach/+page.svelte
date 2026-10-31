@@ -26,7 +26,7 @@
 <div class="mx-auto max-w-6xl px-5 py-8 md:px-10 md:py-10">
 	<div class="flex flex-wrap items-end justify-between gap-3">
 		<div>
-			<h1 class="text-3xl md:text-4xl">การสอน</h1>
+			<h1 class="page-title">การสอน</h1>
 			<p class="mt-1 text-muted">วิชา เทอม และคำขอเข้าเรียนของคุณ</p>
 		</div>
 		<button class="btn btn-primary" onclick={() => (newOpen = true)}><Plus size={18} /> เพิ่มวิชา</button>
@@ -34,7 +34,7 @@
 
 	{#if data.pending.length}
 		<section class="mt-8">
-			<h2 class="mb-3 text-xl">คำขอเข้าเรียน <span class="text-muted">({data.pending.length})</span></h2>
+			<h2 class="section-title mb-3">คำขอเข้าเรียน <span class="text-muted">({data.pending.length})</span></h2>
 			<ul class="divide-y divide-line overflow-hidden rounded-2xl border border-line">
 				{#each data.pending as e (e.id)}
 					<li class="flex flex-col gap-3 bg-white p-4 sm:flex-row sm:items-center">
@@ -58,7 +58,7 @@
 	{/if}
 
 	<section class="mt-10">
-		<h2 class="mb-4 text-xl">วิชา</h2>
+		<h2 class="section-title mb-4">วิชา</h2>
 		{#if data.subjects.length === 0}
 			<EmptyState title="ยังไม่มีวิชา" text="สร้างวิชาแรกของคุณ แล้วเพิ่มเทอม (เช่น 2/2569) เพื่อเปิดรับนักเรียน">
 				{#snippet icon()}<BookOpen size={26} />{/snippet}

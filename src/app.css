@@ -21,7 +21,14 @@
 	--color-sun-500: #f0a500;
 	--color-sun-600: #c97c00;
 
+	/* Semantic: success = done / present / approved */
+	--color-success-50: #ecfdf5;
+	--color-success-500: #10b981;
+	--color-success-600: #059669;
+	--color-success-700: #047857;
+
 	--color-ink: #1c1c1e;
+	--color-subtle: #a3a3a3; /* placeholders, empty values */
 	--color-muted: #6b6b70;
 	--color-line: #ececec;
 	--color-canvas: #f6f5f3;
@@ -51,6 +58,17 @@
 }
 
 @layer components {
+	/* Typography scale — use these instead of ad-hoc sizes */
+	.page-title {
+		@apply text-2xl font-medium md:text-3xl;
+	}
+	.section-title {
+		@apply text-lg font-medium md:text-xl;
+	}
+	.card-title {
+		@apply text-lg font-medium;
+	}
+
 	/* Buttons — pill shaped, like the Fastwork reference */
 	.btn {
 		@apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[15px] font-normal whitespace-nowrap transition select-none disabled:cursor-not-allowed disabled:opacity-50;

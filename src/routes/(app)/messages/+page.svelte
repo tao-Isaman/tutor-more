@@ -121,7 +121,7 @@
 	<!-- Conversation list -->
 	<aside class="flex w-full flex-col border-line md:w-[340px] md:border-r {active ? 'hidden md:flex' : 'flex'}">
 		<div class="flex items-center justify-between px-5 pt-6 pb-4">
-			<h1 class="text-2xl">แชท</h1>
+			<h1 class="page-title">แชท</h1>
 			{#if data.tutors.length}
 				<button class="btn btn-soft btn-sm" onclick={() => (newOpen = true)}><Plus size={16} /> ใหม่</button>
 			{/if}

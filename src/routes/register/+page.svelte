@@ -92,7 +92,7 @@
 			<div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-sun-100 text-brand-600">
 				<MailCheck size={28} />
 			</div>
-			<h2 class="text-xl">ยืนยันอีเมลของคุณ</h2>
+			<h2 class="section-title">ยืนยันอีเมลของคุณ</h2>
 			<p class="mt-2 text-muted">
 				เราส่งลิงก์ยืนยันไปที่ <span class="text-ink">{sentTo}</span> แล้ว กดลิงก์ในอีเมลเพื่อเปิดใช้งานบัญชี
 			</p>

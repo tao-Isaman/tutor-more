@@ -59,7 +59,7 @@
 					<a href="/home" class="btn btn-dark">ไปที่ห้องเรียน <ArrowRight size={16} /></a>
 				{:else}
 					<a href="/login" class="btn btn-ghost">เข้าสู่ระบบ</a>
-					<a href="/register" class="btn btn-dark">สมัครสมาชิก</a>
+					<a href="/register" class="btn btn-primary">สมัครสมาชิก</a>
 				{/if}
 			</nav>
 		</div>
@@ -68,7 +68,7 @@
 	<!-- Hero: white, typographic, search-first (Fastwork-style) -->
 	<section class="mx-auto grid max-w-6xl items-center gap-12 px-5 pt-12 pb-16 md:pt-20 lg:grid-cols-[1.1fr_1fr]">
 		<div>
-			<span class="inline-flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-sm text-neutral-600">
+			<span class="inline-flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-sm text-muted">
 				<span class="h-1.5 w-1.5 rounded-full bg-brand-600"></span>
 				สถาบันกวดวิชาวิศวกรรม สำหรับนักศึกษา มทส.
 			</span>
@@ -82,9 +82,9 @@
 			</p>
 
 			<form onsubmit={search} class="mt-8 flex max-w-xl items-center gap-2 rounded-full border border-line bg-white p-1.5 pl-5 shadow-[0_8px_30px_rgba(0,0,0,0.06)] focus-within:border-neutral-300">
-				<Search size={20} class="shrink-0 text-neutral-400" />
+				<Search size={20} class="shrink-0 text-subtle" />
 				<input
-					class="min-w-0 flex-1 bg-transparent py-2 text-[16px] outline-none placeholder:text-neutral-400"
+					class="min-w-0 flex-1 bg-transparent py-2 text-[16px] outline-none placeholder:text-subtle"
 					placeholder="อยากติววิชาอะไร? เช่น Statics"
 					bind:value={q}
 					aria-label="ค้นหาคอร์ส"
@@ -95,7 +95,7 @@
 			<div class="mt-5 flex flex-wrap items-center gap-2 text-sm">
 				<span class="text-muted">วิชายอดนิยม:</span>
 				{#each popular as p (p)}
-					<a href="/explore?q={encodeURIComponent(p)}" class="rounded-full border border-line px-3 py-1 text-neutral-700 transition hover:border-neutral-300 hover:bg-neutral-50">{p}</a>
+					<a href="/explore?q={encodeURIComponent(p)}" class="rounded-full border border-line px-3 py-1 text-neutral-800 transition hover:border-neutral-300 hover:bg-neutral-50">{p}</a>
 				{/each}
 			</div>
 		</div>
@@ -117,7 +117,7 @@
 					<div class="mt-4 space-y-2.5">
 						{#each [['บทที่ 1 เวกเตอร์ของแรง', 100], ['บทที่ 2 สมดุลของอนุภาค', 64], ['บทที่ 3 โมเมนต์', 0]] as [t, v] (t)}
 							<div class="flex items-center gap-3 text-sm">
-								<CirclePlay size={16} class={Number(v) === 100 ? 'text-emerald-600' : 'text-neutral-400'} />
+								<CirclePlay size={16} class={Number(v) === 100 ? 'text-success-600' : 'text-subtle'} />
 								<span class="flex-1 truncate">{t}</span>
 								<span class="text-xs text-muted">{v}%</span>
 							</div>
@@ -127,7 +127,7 @@
 
 				<!-- check-in toast -->
 				<div class="absolute right-6 bottom-28 flex items-center gap-3 rounded-2xl border border-line bg-white px-4 py-3 shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
-					<span class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><CircleCheck size={20} /></span>
+					<span class="flex h-9 w-9 items-center justify-center rounded-full bg-success-50 text-success-600"><CircleCheck size={20} /></span>
 					<div class="text-sm">
 						<div>เช็คชื่อสำเร็จ</div>
 						<div class="text-xs text-muted">ห่างจากห้องเรียน 12 ม.</div>

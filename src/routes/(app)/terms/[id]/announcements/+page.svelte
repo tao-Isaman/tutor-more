@@ -81,7 +81,7 @@
 				<Avatar profile={a.author} size={42} />
 				<div class="min-w-0 flex-1">
 					<div class="flex flex-wrap items-center gap-2">
-						<h2 class="text-lg">{a.title}</h2>
+						<h2 class="card-title">{a.title}</h2>
 						{#if a.is_pinned}<span class="badge bg-sun-200 text-ink"><Pin size={12} /> ปักหมุดแล้ว</span>{/if}
 					</div>
 					<div class="text-sm text-muted">{fullName(a.author)} · {formatDateTime(a.created_at)}</div>
@@ -96,7 +96,7 @@
 			<Markdown source={a.body} class="mt-3" />
 			{#if data.isStaff}
 				<button class="mt-4 flex items-center gap-2 text-sm text-muted hover:text-ink" onclick={() => (readersOf = a.id)}>
-					<CheckCheck size={16} class="text-emerald-600" />
+					<CheckCheck size={16} class="text-success-600" />
 					อ่านแล้ว {a.reads.length} จาก {data.students.length} คน
 				</button>
 			{/if}
@@ -135,7 +135,7 @@
 					<Avatar profile={s} size={34} />
 					<span class="flex-1 truncate">{displayName(s)}</span>
 					{#if readMap.has(s.id)}
-						<span class="text-sm text-emerald-700">อ่านแล้ว {formatDateTime(readMap.get(s.id))}</span>
+						<span class="text-sm text-success-700">อ่านแล้ว {formatDateTime(readMap.get(s.id))}</span>
 					{:else}
 						<span class="text-sm text-brand-600">ยังไม่อ่าน</span>
 					{/if}

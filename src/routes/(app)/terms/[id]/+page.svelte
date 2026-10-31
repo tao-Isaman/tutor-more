@@ -112,14 +112,14 @@
 <div class="space-y-8">
 	{#each groups as [section, items] (section)}
 		<section>
-			<h2 class="mb-3 text-lg">{section}</h2>
+			<h2 class="card-title mb-3">{section}</h2>
 			<ul class="divide-y divide-line overflow-hidden rounded-2xl border border-line">
 				{#each items as c (c.id)}
 					{@const Icon = icons[c.type]}
 					{@const prog = data.progress[c.id]}
 					{@const done = c.type === 'video' ? !!prog?.completed_at : data.viewed.has(c.id)}
 					<li class="group flex items-center gap-4 bg-white px-4 py-3.5 transition hover:bg-neutral-50">
-						<span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl {done ? 'bg-emerald-50 text-emerald-600' : 'bg-brand-50 text-brand-600'}">
+						<span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl {done ? 'bg-success-50 text-success-600' : 'bg-brand-50 text-brand-600'}">
 							{#if done}<CircleCheck size={20} />{:else}<Icon size={20} />{/if}
 						</span>
 						<a href="/terms/{data.term.id}/content/{c.id}" class="min-w-0 flex-1">

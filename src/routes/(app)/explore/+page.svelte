@@ -23,11 +23,11 @@
 <div class="mx-auto max-w-6xl px-5 py-8 md:px-10 md:py-10">
 	<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
 		<div>
-			<h1 class="text-3xl md:text-4xl">ค้นหาคอร์ส</h1>
+			<h1 class="page-title">ค้นหาคอร์ส</h1>
 			<p class="mt-1 text-muted">เลือกวิชา เลือกเทอม แล้วขอที่นั่งได้เลย</p>
 		</div>
 		<label class="relative w-full sm:w-80">
-			<Search size={18} class="absolute top-1/2 left-4 -translate-y-1/2 text-neutral-400" />
+			<Search size={18} class="absolute top-1/2 left-4 -translate-y-1/2 text-subtle" />
 			<input class="input rounded-full pl-11" placeholder="ค้นหาวิชา…" bind:value={q} />
 		</label>
 	</div>

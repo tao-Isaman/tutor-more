@@ -30,7 +30,7 @@
 
 <div class="mx-auto max-w-6xl px-5 py-8 md:px-10 md:py-10">
 	<p class="text-muted">{greeting}</p>
-	<h1 class="text-3xl md:text-4xl">{data.profile?.nickname || data.profile?.first_name} 👋</h1>
+	<h1 class="page-title">{data.profile?.nickname || data.profile?.first_name} 👋</h1>
 
 	<!-- Live check-in banners -->
 	{#each data.openSessions as s (s.id)}
@@ -57,7 +57,7 @@
 			{#if staff}
 				<section>
 					<div class="mb-4 flex items-center justify-between">
-						<h2 class="text-xl">คลาสที่สอน</h2>
+						<h2 class="section-title">คลาสที่สอน</h2>
 						<a href="/teach" class="text-brand-600 hover:underline">จัดการ</a>
 					</div>
 					{#if data.pendingCount}
@@ -93,7 +93,7 @@
 			{#if !staff || approved.length || waiting.length}
 				<section>
 					<div class="mb-4 flex items-center justify-between">
-						<h2 class="text-xl">คลาสของฉัน</h2>
+						<h2 class="section-title">คลาสของฉัน</h2>
 						<a href="/explore" class="text-brand-600 hover:underline">หาคอร์สเพิ่ม</a>
 					</div>
 					{#if approved.length || waiting.length}
@@ -133,7 +133,7 @@
 
 			{#if data.progress.length}
 				<section>
-					<h2 class="mb-4 text-xl">ดูต่อ</h2>
+					<h2 class="section-title mb-4">ดูต่อ</h2>
 					<div class="space-y-3">
 						{#each data.progress as p (p.content_id)}
 							{#if p.content}

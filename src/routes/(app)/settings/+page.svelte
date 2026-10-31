@@ -100,7 +100,7 @@
 <svelte:head><title>ตั้งค่า · Tutor More Academy</title></svelte:head>
 
 <div class="mx-auto max-w-3xl px-5 py-8 md:px-10 md:py-10">
-	<h1 class="text-3xl md:text-4xl">ตั้งค่า</h1>
+	<h1 class="page-title">ตั้งค่า</h1>
 
 	<nav class="mt-6 flex gap-7 border-b border-line">
 		<button class="tab {tab === 'profile' ? 'tab-active' : ''}" onclick={() => (tab = 'profile')}>โปรไฟล์</button>
@@ -143,7 +143,7 @@
 			</section>
 
 			<section>
-				<h2 class="mb-1 text-lg">ช่องทางติดต่อ</h2>
+				<h2 class="card-title mb-1">ช่องทางติดต่อ</h2>
 				<p class="mb-4 text-sm text-muted">เห็นได้เฉพาะคุณ ติวเตอร์ของคุณ และแอดมินเท่านั้น</p>
 				<div class="grid gap-4 sm:grid-cols-2">
 					<div><label class="label" for="ph">เบอร์โทร</label><input id="ph" class="input" type="tel" maxlength="30" bind:value={f.phone} /></div>

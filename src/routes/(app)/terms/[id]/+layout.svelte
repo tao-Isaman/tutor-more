@@ -35,7 +35,7 @@
 		</a>
 		<div class="mt-3 flex flex-wrap items-end justify-between gap-3">
 			<div>
-				<h1 class="text-2xl md:text-3xl">{data.subject.title} <span class="text-muted">· {data.term.name}</span></h1>
+				<h1 class="page-title">{data.subject.title} <span class="text-muted">· {data.term.name}</span></h1>
 				{#if data.subject.title_th}<p class="text-muted">{data.subject.title_th}</p>{/if}
 			</div>
 			{#if data.isStaff}<span class="badge bg-brand-50 text-brand-700">พี่สอนคลาสนี้</span>{/if}

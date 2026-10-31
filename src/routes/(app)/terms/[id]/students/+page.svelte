@@ -78,7 +78,7 @@
 
 {#if pending.length}
 	<section class="mb-10">
-		<h2 class="mb-1 text-xl">รออนุมัติ <span class="text-muted">({pending.length})</span></h2>
+		<h2 class="section-title mb-1">รออนุมัติ <span class="text-muted">({pending.length})</span></h2>
 		<p class="mb-4 text-sm text-muted">
 			ตรวจสอบการชำระเงินก่อน แล้วค่อยกดอนุมัติ{#if seatsLeft !== null} · เหลือ {seatsLeft} ที่นั่ง{/if}
 		</p>
@@ -110,10 +110,10 @@
 
 <section>
 	<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-		<h2 class="text-xl">รายชื่อนักเรียน <span class="text-muted">({data.enrollments.filter((e) => e.status === 'approved').length}{data.term.capacity ? `/${data.term.capacity}` : ''})</span></h2>
+		<h2 class="section-title">รายชื่อนักเรียน <span class="text-muted">({data.enrollments.filter((e) => e.status === 'approved').length}{data.term.capacity ? `/${data.term.capacity}` : ''})</span></h2>
 		<div class="flex gap-2">
 			<label class="relative">
-				<Search size={16} class="absolute top-1/2 left-3 -translate-y-1/2 text-neutral-400" />
+				<Search size={16} class="absolute top-1/2 left-3 -translate-y-1/2 text-subtle" />
 				<input class="input rounded-full py-2 pl-9 text-sm" placeholder="ค้นหา…" bind:value={q} />
 			</label>
 			<button class="btn btn-outline btn-sm" onclick={exportCsv}><Download size={16} /> CSV</button>

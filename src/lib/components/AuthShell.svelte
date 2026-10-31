@@ -24,7 +24,7 @@
 				<Logo size={40} />
 				<span class="text-lg font-medium">ติวเตอร์มอร์ อะคาเดมี</span>
 			</a>
-			<h1 class="text-3xl">{title}</h1>
+			<h1 class="page-title">{title}</h1>
 			<p class="mt-1 mb-8 text-muted">{subtitle}</p>
 			{@render children()}
 		</div>

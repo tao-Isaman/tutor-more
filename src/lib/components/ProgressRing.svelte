@@ -5,7 +5,7 @@
 		stroke = 4,
 		label = '',
 		track = 'rgba(255,255,255,0.18)',
-		color = '#ffc400'
+		color = 'var(--color-sun-400)'
 	}: { value: number; size?: number; stroke?: number; label?: string; track?: string; color?: string } = $props();
 	const r = $derived((size - stroke) / 2);
 	const c = $derived(2 * Math.PI * r);

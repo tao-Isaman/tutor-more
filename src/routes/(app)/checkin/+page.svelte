@@ -101,27 +101,27 @@
 <div class="mx-auto flex max-w-lg flex-col items-center px-5 py-10 text-center md:py-16">
 	{#if state.kind === 'idle'}
 		<div class="flex h-20 w-20 items-center justify-center rounded-3xl bg-sun-400"><QrCode size={40} class="text-brand-600" /></div>
-		<h1 class="mt-6 text-3xl">เช็คชื่อเข้าเรียน</h1>
+		<h1 class="page-title mt-6">เช็คชื่อเข้าเรียน</h1>
 		<p class="mt-2 text-muted">สแกน QR ที่ติวเตอร์แสดงบนจอ หรือจะใช้แอปกล้องในมือถือก็ได้</p>
 		<button class="btn btn-primary mt-8 px-8 py-3 text-base" onclick={() => (state = { kind: 'scanning' })}>
 			<ScanLine size={20} /> เปิดกล้องสแกน
 		</button>
 	{:else if state.kind === 'scanning'}
-		<h1 class="mb-6 text-2xl">สแกน QR โค้ด</h1>
+		<h1 class="page-title mb-6">สแกน QR โค้ด</h1>
 		<QrScanner onscan={handleScan} />
 		<button class="btn btn-ghost mt-6" onclick={() => (state = { kind: 'idle' })}>ยกเลิก</button>
 	{:else if state.kind === 'working'}
 		<LoaderCircle size={56} class="animate-spin text-brand-600" />
 		<p class="mt-6 text-xl">{state.text}</p>
 	{:else}
-		<div class="flex h-24 w-24 items-center justify-center rounded-full {good ? 'bg-emerald-50 text-emerald-600' : 'bg-brand-50 text-brand-600'}">
+		<div class="flex h-24 w-24 items-center justify-center rounded-full {good ? 'bg-success-50 text-success-600' : 'bg-brand-50 text-brand-600'}">
 			{#if good}<CircleCheck size={56} />
 			{:else if state.status === 'expired'}<TimerReset size={52} />
 			{:else if state.status === 'too_far'}<MapPinOff size={52} />
 			{:else if state.status === 'location_required'}<MapPin size={52} />
 			{:else}<CircleX size={56} />{/if}
 		</div>
-		<h1 class="mt-6 text-3xl">
+		<h1 class="page-title mt-6">
 			{#if state.status === 'ok'}เช็คชื่อสำเร็จ!
 			{:else if state.status === 'already'}เช็คชื่อไปแล้ว
 			{:else if state.status === 'expired'}QR โค้ดหมดอายุแล้ว

@@ -62,7 +62,7 @@
 <svelte:head><title>แอดมิน · Tutor More Academy</title></svelte:head>
 
 <div class="mx-auto max-w-6xl px-5 py-8 md:px-10 md:py-10">
-	<h1 class="flex items-center gap-3 text-3xl md:text-4xl"><ShieldCheck class="text-brand-600" size={32} /> แอดมิน</h1>
+	<h1 class="page-title flex items-center gap-3"><ShieldCheck class="text-brand-600" size={32} /> แอดมิน</h1>
 
 	<div class="mt-6 grid gap-4 sm:grid-cols-4">
 		<div class="card p-5"><div class="flex items-center gap-2 text-sm text-muted"><Users size={16} /> ผู้ใช้</div><div class="mt-1 text-3xl">{counts.all}</div></div>
@@ -79,7 +79,7 @@
 	{#if tab === 'users'}
 		<div class="mt-6 flex flex-wrap items-center gap-3">
 			<label class="relative min-w-60 flex-1">
-				<Search size={16} class="absolute top-1/2 left-4 -translate-y-1/2 text-neutral-400" />
+				<Search size={16} class="absolute top-1/2 left-4 -translate-y-1/2 text-subtle" />
 				<input class="input rounded-full pl-10" placeholder="ค้นหาชื่อ อีเมล หรือเบอร์โทร…" bind:value={q} />
 			</label>
 			<div class="flex gap-1 rounded-full bg-neutral-100 p-1 text-sm">

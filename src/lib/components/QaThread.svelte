@@ -107,7 +107,7 @@
 				<span class="font-normal">{displayName(c.author)}</span>
 				{#if staffAuthor}<span class="badge bg-brand-600 text-white">ติวเตอร์</span>{/if}
 				<span class="text-muted">{timeAgo(c.created_at)}</span>
-				{#if !isReply && c.is_resolved}<span class="badge bg-emerald-50 text-emerald-700"><CircleCheck size={12} /> ตอบแล้ว</span>{/if}
+				{#if !isReply && c.is_resolved}<span class="badge bg-success-50 text-success-700"><CircleCheck size={12} /> ตอบแล้ว</span>{/if}
 			</div>
 			<p class="mt-1 font-read whitespace-pre-wrap text-neutral-800">{c.body}</p>
 			<div class="mt-1 flex gap-3 text-sm text-muted">
@@ -159,7 +159,7 @@
 							<CornerDownRight size={16} class="shrink-0 text-muted" />
 							<!-- svelte-ignore a11y_autofocus -->
 							<input class="input" maxlength="4000" placeholder="เขียนคำตอบ…" autofocus bind:value={replyBody} />
-							<button class="btn btn-dark btn-sm" disabled={busy || !replyBody.trim()}>ตอบกลับ</button>
+							<button class="btn btn-primary btn-sm" disabled={busy || !replyBody.trim()}>ตอบกลับ</button>
 						</form>
 					{/if}
 				</div>

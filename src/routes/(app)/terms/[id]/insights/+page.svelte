@@ -39,7 +39,7 @@
 	const classAvg = $derived(perStudent.length ? Math.round(perStudent.reduce((a, x) => a + x.avg, 0) / perStudent.length) : 0);
 
 	const shade = (v: number) =>
-		v >= 90 ? 'bg-emerald-500 text-white' : v >= 50 ? 'bg-sun-300' : v > 0 ? 'bg-sun-100' : 'bg-neutral-100 text-neutral-400';
+		v >= 90 ? 'bg-success-500 text-white' : v >= 50 ? 'bg-sun-300' : v > 0 ? 'bg-sun-100' : 'bg-neutral-100 text-subtle';
 </script>
 
 <svelte:head><title>สถิติการเรียน · {data.subject.title}</title></svelte:head>

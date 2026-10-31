@@ -45,6 +45,7 @@
 		if (t.token === token) return;
 		token = t.token;
 		const url = `${page.url.origin}/checkin?s=${s.id}&t=${t.token}`;
+		// qrcode needs literal hex values: ink / white
 		qrSvg = await QRCode.toString(url, { type: 'svg', margin: 1, errorCorrectionLevel: 'M', color: { dark: '#1c1c1e', light: '#ffffff' } });
 	}
 

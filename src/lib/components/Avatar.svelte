@@ -7,7 +7,8 @@
 		ring = false
 	}: { profile: Partial<ProfileLite> | null | undefined; size?: number; ring?: boolean } = $props();
 
-	const palette = ['bg-brand-100 text-brand-700', 'bg-sun-100 text-sun-600', 'bg-rose-100 text-rose-700', 'bg-amber-100 text-amber-700'];
+	// Brand-only tones so avatars match the rest of the UI
+	const palette = ['bg-brand-100 text-brand-700', 'bg-sun-100 text-sun-600', 'bg-brand-50 text-brand-600', 'bg-sun-200 text-ink'];
 	const tone = $derived(palette[(profile?.id?.charCodeAt(0) ?? 0) % palette.length]);
 </script>
 

@@ -62,7 +62,7 @@
 				{#if myWatched && !data.isStaff}
 					<div class="mt-3 flex items-center gap-3 text-sm text-muted">
 						{#if myWatched.completed}
-							<span class="flex items-center gap-1.5 text-emerald-700"><CircleCheck size={16} /> ดูจบแล้ว</span>
+							<span class="flex items-center gap-1.5 text-success-700"><CircleCheck size={16} /> ดูจบแล้ว</span>
 						{:else}
 							<div class="h-1.5 w-40 overflow-hidden rounded-full bg-neutral-100">
 								<div class="h-full bg-brand-600" style="width:{percent(myWatched.watched_seconds, myWatched.duration_seconds)}%"></div>
@@ -137,7 +137,7 @@
 									<div class="mt-1 flex items-center gap-2">
 										<div class="h-1.5 flex-1 overflow-hidden rounded-full bg-neutral-100">
 											<div
-												class="h-full {v.progress.completed_at ? 'bg-emerald-500' : 'bg-brand-600'}"
+												class="h-full {v.progress.completed_at ? 'bg-success-500' : 'bg-brand-600'}"
 												style="width:{percent(v.progress.watched_seconds, v.progress.duration_seconds || c.duration_seconds || 0)}%"
 											></div>
 										</div>

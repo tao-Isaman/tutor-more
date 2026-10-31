@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-vercel';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
@@ -13,8 +13,8 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
-			// adapter-auto picks the right adapter on Vercel/Netlify/Cloudflare.
-			adapter: adapter()
+			// Deployed on Vercel, Singapore region (same as the Supabase project).
+			adapter: adapter({ runtime: 'nodejs22.x', regions: ['sin1'] })
 		})
 	]
 });

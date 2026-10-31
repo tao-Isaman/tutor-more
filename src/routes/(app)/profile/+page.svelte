@@ -1,20 +1,25 @@
 <script lang="ts">
 	import {
+		ArrowUpRight,
+		AtSign,
 		BookOpen,
 		Briefcase,
-		ChevronUp,
-		AtSign,
+		CalendarCheck,
+		Check,
+		CirclePlay,
 		GraduationCap,
 		Globe,
+		Mail,
 		MessageCircle,
+		MessageSquare,
 		Pencil,
 		Phone,
-		Share2
+		Share2,
+		Users
 	} from '@lucide/svelte';
 	import Avatar from '#lib/components/Avatar.svelte';
 	import EmptyState from '#lib/components/EmptyState.svelte';
-	import ProgressRing from '#lib/components/ProgressRing.svelte';
-	import StatusBadge from '#lib/components/StatusBadge.svelte';
+		import StatusBadge from '#lib/components/StatusBadge.svelte';
 	import { toast } from '#lib/toast.svelte.ts';
 	import { EDUCATION_LABEL, fullName, isStaffRole } from '#lib/utils.ts';
 	import type { PageProps } from './$types';
@@ -23,8 +28,6 @@
 	const p = $derived(data.profile!);
 	const staff = $derived(isStaffRole(p.role));
 
-	let tab = $state<'classes' | 'about'>('classes');
-	let checklistOpen = $state(false);
 
 	const checklist = $derived([
 		{ done: !!p.avatar_url, label: 'เพิ่มรูปโปรไฟล์' },
@@ -39,22 +42,37 @@
 	const stats = $derived(
 		staff
 			? [
-					{ value: data.stats.subjects, label: 'วิชา' },
-					{ value: data.stats.students, label: 'นักเรียน' },
-					{ value: data.stats.questions, label: 'คำตอบ' },
-					{ value: p.role === 'admin' ? 'แอดมิน' : 'ติวเตอร์', label: 'บทบาท' }
+					{ value: data.stats.subjects, label: 'วิชาที่สอน', icon: BookOpen },
+					{ value: data.stats.students, label: 'นักเรียนทั้งหมด', icon: Users },
+					{ value: data.stats.questions, label: 'ตอบคำถาม', icon: MessageSquare },
+					{ value: data.subjects.reduce((n, s) => n + s.terms.length, 0), label: 'เทอมที่เปิด', icon: CalendarCheck }
 				]
 			: [
-					{ value: data.classes.length, label: 'คลาส' },
-					{ value: data.stats.attended, label: 'เช็คชื่อ' },
-					{ value: data.stats.completed, label: 'ดูวิดีโอจบ' },
-					{ value: data.stats.questions, label: 'คำถาม' }
+					{ value: data.classes.length, label: 'คลาสที่เรียน', icon: BookOpen },
+					{ value: data.stats.attended, label: 'ครั้งที่เช็คชื่อ', icon: CalendarCheck },
+					{ value: data.stats.completed, label: 'วิดีโอที่ดูจบ', icon: CirclePlay },
+					{ value: data.stats.questions, label: 'คำถามที่ถาม', icon: MessageSquare }
 				]
 	);
 
-	const chips = $derived(
-		staff ? data.subjects.map((s) => s.title) : [...new Set(data.classes.map((c) => c.term!.subject?.title ?? ''))].filter(Boolean)
+	const items = $derived(
+		staff
+			? data.subjects.map((s) => ({ href: `/subjects/${s.id}`, code: s.code, title: s.title, sub: s.title_th ?? `${s.terms.length} เทอม` }))
+			: data.classes.map((c) => ({
+					href: `/terms/${c.term!.id}`,
+					code: c.term!.subject?.code ?? null,
+					title: c.term!.subject?.title ?? '',
+					sub: `เทอม ${c.term!.name}`
+				}))
 	);
+
+	const contacts = $derived([
+		{ icon: Mail, label: 'อีเมล', value: data.contacts?.email },
+		{ icon: Phone, label: 'เบอร์โทร', value: data.contacts?.phone },
+		{ icon: MessageCircle, label: 'LINE', value: data.contacts?.line_id },
+		{ icon: Globe, label: 'Facebook', value: data.contacts?.facebook },
+		{ icon: AtSign, label: 'Instagram', value: data.contacts?.instagram ? '@' + data.contacts.instagram : null }
+	]);
 
 	async function share() {
 		const text = `${fullName(p)} บน Tutor More Academy`;
@@ -69,140 +87,140 @@
 
 <svelte:head><title>{fullName(p)} · Tutor More Academy</title></svelte:head>
 
-<div class="mx-auto max-w-[1400px] px-5 py-8 md:px-14 md:py-10">
-	<p class="text-muted">โปรไฟล์ของคุณ</p>
+<div class="mx-auto max-w-6xl px-4 py-6 md:px-8 md:py-8">
+	<!-- Header card: soft cover + overlapping avatar -->
+	<section class="overflow-hidden rounded-[28px] border border-line bg-white">
+		<div class="relative h-28 overflow-hidden bg-canvas md:h-44">
+			<div class="absolute -top-16 right-6 h-40 w-40 rounded-full bg-sun-200/70 md:right-10 md:h-56 md:w-56"></div>
+			<div class="absolute -bottom-24 right-40 h-36 w-36 rounded-full bg-brand-100/80 md:right-56 md:h-48 md:w-48"></div>
+			<div class="absolute top-6 left-8 hidden text-sm text-muted md:block">โปรไฟล์ของคุณ</div>
+		</div>
 
-	<div class="mt-6 grid gap-10 xl:grid-cols-[1fr_minmax(0,820px)]">
-		<!-- Left: identity (Fastwork-style) -->
-		<section class="flex flex-col gap-6 sm:flex-row sm:items-start">
-			<Avatar profile={p} size={104} ring />
-			<div class="min-w-0 flex-1">
-				<h1 class="text-3xl font-medium md:text-[40px] md:leading-tight">{fullName(p)}</h1>
-				<div class="mt-2 flex flex-wrap items-center gap-2 text-muted">
-					<span>@{p.nickname || 'ชื่อเล่น'}</span>
-					<StatusBadge status={p.role} />
+		<div class="px-6 pb-6 md:px-8">
+			<div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+				<div class="flex flex-col gap-3 md:flex-row md:items-end md:gap-5">
+					<div class="relative z-10 -mt-14 w-fit md:-mt-16">
+						<Avatar profile={p} size={120} ring />
+					</div>
+					<div class="min-w-0 md:pb-2">
+						<div class="flex flex-wrap items-center gap-2">
+							<h1 class="text-2xl font-medium md:text-3xl">{fullName(p)}</h1>
+							<StatusBadge status={p.role} />
+						</div>
+						<p class="mt-1 text-muted">
+							@{p.nickname || 'ชื่อเล่น'}
+							{#if p.school}<span class="mx-1.5">·</span>{p.school}{/if}
+						</p>
+					</div>
 				</div>
+				<div class="flex gap-2 md:pb-2">
+					<a href="/settings" class="btn btn-dark"><Pencil size={16} /> แก้ไขโปรไฟล์</a>
+					<button class="btn btn-soft" onclick={share} aria-label="ชวนเพื่อน"><Share2 size={16} /><span class="hidden sm:inline">ชวนเพื่อน</span></button>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div class="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
+		<!-- Sidebar -->
+		<aside class="order-2 space-y-6 lg:order-1">
+			{#if doneCount < checklist.length}
+				<section class="card p-5">
+					<div class="flex items-center justify-between">
+						<h2 class="text-lg">กรอกโปรไฟล์ให้ครบ</h2>
+						<span class="text-sm text-muted">{doneCount}/{checklist.length}</span>
+					</div>
+					<div class="mt-3 h-2 overflow-hidden rounded-full bg-neutral-100">
+						<div class="h-full rounded-full bg-brand-600 transition-all" style="width:{(doneCount / checklist.length) * 100}%"></div>
+					</div>
+					<ul class="mt-4 space-y-2.5 text-sm">
+						{#each checklist as c (c.label)}
+							<li class="flex items-center gap-2.5 {c.done ? 'text-muted line-through' : ''}">
+								<span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full {c.done ? 'bg-emerald-500 text-white' : 'border border-neutral-300'}">
+									{#if c.done}<Check size={12} strokeWidth={3} />{/if}
+								</span>
+								{c.label}
+							</li>
+						{/each}
+					</ul>
+					<a href="/settings" class="btn btn-primary btn-sm mt-5 w-full">กรอกข้อมูลเลย</a>
+				</section>
+			{/if}
+
+			<section class="card p-5">
+				<h2 class="text-lg">เกี่ยวกับ</h2>
 				{#if p.bio}
-					<p class="mt-3 max-w-xl text-[17px] leading-relaxed text-neutral-600">{p.bio}</p>
+					<p class="mt-2 font-read leading-relaxed text-neutral-700">{p.bio}</p>
 				{:else}
-					<a href="/settings" class="mt-3 inline-block text-neutral-400 hover:text-brand-600">+ เพิ่มแนะนำตัวสั้น ๆ</a>
+					<a href="/settings" class="mt-2 inline-block text-sm text-neutral-400 hover:text-brand-600">+ เพิ่มแนะนำตัวสั้น ๆ</a>
 				{/if}
-				<ul class="mt-4 space-y-2 text-neutral-600">
-					{#if p.school}<li class="flex items-center gap-2"><Briefcase size={18} strokeWidth={1.6} /> {p.school}</li>{/if}
-					<li class="flex items-center gap-2">
-						<GraduationCap size={18} strokeWidth={1.6} />
+				<ul class="mt-4 space-y-3 border-t border-line pt-4 text-sm">
+					<li class="flex items-center gap-3">
+						<GraduationCap size={18} strokeWidth={1.6} class="shrink-0 text-muted" />
 						{#if p.education_level}{EDUCATION_LABEL[p.education_level]}{:else}<a href="/settings" class="text-neutral-400 hover:text-brand-600">เพิ่มระดับการศึกษา</a>{/if}
 					</li>
+					<li class="flex items-center gap-3">
+						<Briefcase size={18} strokeWidth={1.6} class="shrink-0 text-muted" />
+						{#if p.school}{p.school}{:else}<a href="/settings" class="text-neutral-400 hover:text-brand-600">เพิ่มโรงเรียน / คณะ</a>{/if}
+					</li>
 				</ul>
+			</section>
 
-				<div class="mt-6 inline-grid grid-cols-4 divide-x divide-line rounded-2xl border border-line">
-					{#each stats as s (s.label)}
-						<div class="px-5 py-3 text-center md:px-7">
-							<div class="text-xl font-normal md:text-2xl">{s.value}</div>
-							<div class="text-sm text-muted">{s.label}</div>
-						</div>
-					{/each}
-				</div>
-
-				<div class="mt-6 flex flex-wrap gap-3">
-					<a href="/settings" class="btn btn-dark px-6 py-3"><Pencil size={18} /> แก้ไขโปรไฟล์</a>
-					<button class="btn btn-soft px-6 py-3" onclick={share}><Share2 size={18} /> ชวนเพื่อน</button>
-				</div>
-			</div>
-		</section>
-
-		<!-- Right: brand panel + chips -->
-		<section>
-			<div class="relative flex aspect-[16/8] items-center justify-center overflow-hidden rounded-3xl bg-brand-600 text-white">
-				<div class="absolute -top-16 -right-10 h-56 w-56 rounded-full bg-sun-400"></div>
-				<div class="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-brand-700"></div>
-				<div class="relative text-center">
-					<div class="text-sun-300">Tutor More Academy</div>
-					<div class="mt-1 text-3xl font-medium text-white md:text-4xl">{staff ? 'สอน' : 'เรียน'}กับ Tutor More</div>
-					<a href={staff ? '/teach' : '/explore'} class="btn mt-5 bg-white/15 text-white hover:bg-white/25">
-						{staff ? 'จัดการคลาส' : 'หาคลาสเรียน'}
-					</a>
-				</div>
-			</div>
-			{#if chips.length}
-				<div class="mt-5 flex flex-wrap gap-3">
-					{#each chips.slice(0, 3) as c (c)}
-						<span class="chip"><BookOpen size={18} strokeWidth={1.6} /> {c}</span>
-					{/each}
-					{#if chips.length > 3}<span class="chip">+{chips.length - 3}</span>{/if}
-				</div>
-			{/if}
-		</section>
-	</div>
-
-	<!-- Tabs -->
-	<nav class="mt-12 flex gap-10 border-b border-line px-1">
-		<button class="tab {tab === 'classes' ? 'tab-active' : ''}" onclick={() => (tab = 'classes')}>{staff ? 'การสอน' : 'คลาส'}</button>
-		<button class="tab {tab === 'about' ? 'tab-active' : ''}" onclick={() => (tab = 'about')}>เกี่ยวกับ</button>
-	</nav>
-
-	<div class="py-8">
-		{#if tab === 'classes'}
-			{@const items = staff
-				? data.subjects.map((s) => ({ href: `/subjects/${s.id}`, title: s.title, sub: s.title_th ?? s.code ?? '' }))
-				: data.classes.map((c) => ({ href: `/terms/${c.term!.id}`, title: c.term!.subject?.title ?? '', sub: `เทอม ${c.term!.name}` }))}
-			{#if items.length}
-				<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-					{#each items as it (it.href)}
-						<a href={it.href} class="group overflow-hidden rounded-3xl bg-ink text-white transition hover:-translate-y-0.5 hover:shadow-xl">
-							<div class="relative aspect-[4/3] p-5">
-								<div class="absolute top-4 right-4 h-3 w-3 rounded-full bg-sun-400"></div>
-								<div class="text-xs text-sun-400">Tutor More</div>
-								<div class="mt-8 text-2xl leading-tight font-semibold text-white">{it.title}</div>
-								<div class="mt-1 text-sun-300">{it.sub}</div>
+			<section class="card p-5">
+				<h2 class="text-lg">ช่องทางติดต่อ</h2>
+				<ul class="mt-3 space-y-3 text-sm">
+					{#each contacts as c (c.label)}
+						<li class="flex items-center gap-3">
+							<span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-600"><c.icon size={15} /></span>
+							<div class="min-w-0">
+								<div class="text-xs text-muted">{c.label}</div>
+								<div class="truncate {c.value ? '' : 'text-neutral-400'}">{c.value || 'ยังไม่ได้ระบุ'}</div>
 							</div>
-						</a>
+						</li>
 					{/each}
+				</ul>
+				<p class="mt-4 text-xs text-muted">เห็นได้เฉพาะคุณ ติวเตอร์ของคุณ และแอดมิน</p>
+			</section>
+		</aside>
+
+		<!-- Main -->
+		<div class="order-1 min-w-0 space-y-6 lg:order-2">
+			<section class="grid grid-cols-2 gap-3 md:grid-cols-4">
+				{#each stats as s (s.label)}
+					<div class="card p-4">
+						<div class="flex h-9 w-9 items-center justify-center rounded-xl bg-neutral-100 text-ink"><s.icon size={18} strokeWidth={1.7} /></div>
+						<div class="mt-3 text-2xl font-medium">{s.value}</div>
+						<div class="text-sm text-muted">{s.label}</div>
+					</div>
+				{/each}
+			</section>
+
+			<section class="card p-5 md:p-6">
+				<div class="mb-4 flex items-center justify-between">
+					<h2 class="text-lg">{staff ? 'วิชาที่สอน' : 'คลาสของฉัน'}</h2>
+					<a href={staff ? '/teach' : '/explore'} class="text-sm text-muted hover:text-ink">{staff ? 'จัดการคลาส' : 'หาคลาสเพิ่ม'}</a>
 				</div>
-			{:else}
-				<EmptyState title={staff ? 'ยังไม่มีวิชา' : 'ยังไม่มีคลาส'} text={staff ? 'วิชาที่คุณสอนจะแสดงที่นี่' : 'คลาสที่คุณเข้าร่วมจะแสดงที่นี่'}>
-					<a href={staff ? '/teach' : '/explore'} class="btn btn-primary">{staff ? 'ไปที่หน้าการสอน' : 'ค้นหาคอร์ส'}</a>
-				</EmptyState>
-			{/if}
-		{:else}
-			<dl class="grid max-w-2xl gap-x-8 gap-y-5 sm:grid-cols-2">
-				<div><dt class="text-sm text-muted">ชื่อ-นามสกุล</dt><dd>{fullName(p)}</dd></div>
-				<div><dt class="text-sm text-muted">ชื่อเล่น</dt><dd>{p.nickname || '—'}</dd></div>
-				<div><dt class="text-sm text-muted">อีเมล</dt><dd>{data.contacts?.email ?? '—'}</dd></div>
-				<div><dt class="text-sm text-muted">เบอร์โทร</dt><dd class="flex items-center gap-2"><Phone size={14} /> {data.contacts?.phone || '—'}</dd></div>
-				<div><dt class="text-sm text-muted">LINE</dt><dd class="flex items-center gap-2"><MessageCircle size={14} /> {data.contacts?.line_id || '—'}</dd></div>
-				<div><dt class="text-sm text-muted">Facebook</dt><dd class="flex items-center gap-2"><Globe size={14} /> {data.contacts?.facebook || '—'}</dd></div>
-				<div><dt class="text-sm text-muted">Instagram</dt><dd class="flex items-center gap-2"><AtSign size={14} /> {data.contacts?.instagram ? '@' + data.contacts.instagram : '—'}</dd></div>
-			</dl>
-			<p class="mt-6 text-sm text-muted">ข้อมูลติดต่อจะเห็นได้เฉพาะคุณ ติวเตอร์ของคุณ และแอดมินเท่านั้น</p>
-		{/if}
+				{#if items.length}
+					<div class="grid gap-3 sm:grid-cols-2">
+						{#each items as it (it.href)}
+							<a href={it.href} class="group flex items-center gap-4 rounded-2xl border border-line p-4 transition hover:border-neutral-300 hover:shadow-sm">
+								<span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-xs font-medium text-brand-700">
+									{it.code?.slice(0, 5) || it.title.slice(0, 2).toUpperCase()}
+								</span>
+								<div class="min-w-0 flex-1">
+									<div class="truncate">{it.title}</div>
+									<div class="truncate text-sm text-muted">{it.sub}</div>
+								</div>
+								<ArrowUpRight size={18} class="shrink-0 text-neutral-300 transition group-hover:text-ink" />
+							</a>
+						{/each}
+					</div>
+				{:else}
+					<EmptyState title={staff ? 'ยังไม่มีวิชา' : 'ยังไม่มีคลาส'} text={staff ? 'วิชาที่คุณสอนจะแสดงที่นี่' : 'คลาสที่คุณเข้าร่วมจะแสดงที่นี่'}>
+						<a href={staff ? '/teach' : '/explore'} class="btn btn-dark">{staff ? 'ไปที่หน้าการสอน' : 'ค้นหาคอร์ส'}</a>
+					</EmptyState>
+				{/if}
+			</section>
+		</div>
 	</div>
 </div>
-
-<!-- "Finish your profile" pill (Fastwork-style) -->
-{#if doneCount < checklist.length}
-	<div class="fixed bottom-24 left-1/2 z-20 w-[min(440px,calc(100%-2rem))] -translate-x-1/2 md:bottom-8">
-		{#if checklistOpen}
-			<ul class="mb-2 space-y-2 rounded-3xl bg-ink p-5 text-white shadow-2xl">
-				{#each checklist as c (c.label)}
-					<li class="flex items-center gap-3 {c.done ? 'text-white/50 line-through' : ''}">
-						<span class="flex h-5 w-5 items-center justify-center rounded-full {c.done ? 'bg-sun-400 text-ink' : 'border border-white/40'}">{c.done ? '✓' : ''}</span>
-						{c.label}
-					</li>
-				{/each}
-				<li><a href="/settings" class="btn btn-sun btn-sm mt-2 w-full">กรอกเลย</a></li>
-			</ul>
-		{/if}
-		<button
-			class="flex w-full items-center gap-4 rounded-full bg-ink py-3 pr-6 pl-3 text-left text-white shadow-2xl"
-			onclick={() => (checklistOpen = !checklistOpen)}
-		>
-			<ProgressRing value={(doneCount / checklist.length) * 100} size={46} label="{doneCount}/{checklist.length}" />
-			<span class="flex-1">
-				<span class="block text-[17px]">กรอกโปรไฟล์ให้ครบ</span>
-				<span class="block text-sm text-white/60">ช่วยให้ติวเตอร์รู้จักคุณมากขึ้น</span>
-			</span>
-			<ChevronUp size={20} class="transition {checklistOpen ? '' : 'rotate-180'}" />
-		</button>
-	</div>
-{/if}

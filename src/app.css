@@ -1,0 +1,155 @@
+@import 'tailwindcss';
+
+@theme {
+	/* Brand: Tutor More red / yellow / white */
+	--color-brand-50: #fff1f1;
+	--color-brand-100: #ffdfe0;
+	--color-brand-200: #ffc5c7;
+	--color-brand-300: #ff9ca0;
+	--color-brand-400: #fb6168;
+	--color-brand-500: #f2333c;
+	--color-brand-600: #e11d2a;
+	--color-brand-700: #bc1420;
+	--color-brand-800: #9b151f;
+	--color-brand-900: #811820;
+
+	--color-sun-50: #fffbea;
+	--color-sun-100: #fff3c4;
+	--color-sun-200: #ffe685;
+	--color-sun-300: #ffd546;
+	--color-sun-400: #ffc400;
+	--color-sun-500: #f0a500;
+	--color-sun-600: #c97c00;
+
+	--color-ink: #1c1c1e;
+	--color-muted: #6b6b70;
+	--color-line: #ececec;
+	--color-canvas: #f6f5f3;
+
+	/* Kanit for UI, Sarabun for long-form reading */
+	--font-sans: 'Kanit', ui-sans-serif, system-ui, sans-serif;
+	--font-read: 'Sarabun', 'Kanit', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+	html {
+		-webkit-tap-highlight-color: transparent;
+	}
+	body {
+		@apply bg-canvas font-sans text-ink antialiased;
+		font-weight: 300;
+	}
+	h1,
+	h2,
+	h3,
+	h4 {
+		@apply font-medium text-ink;
+	}
+	::selection {
+		@apply bg-sun-200;
+	}
+}
+
+@layer components {
+	/* Buttons — pill shaped, like the Fastwork reference */
+	.btn {
+		@apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[15px] font-normal whitespace-nowrap transition select-none disabled:cursor-not-allowed disabled:opacity-50;
+	}
+	.btn-sm {
+		@apply px-3.5 py-1.5 text-sm;
+	}
+	.btn-primary {
+		@apply bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:bg-brand-800;
+	}
+	.btn-dark {
+		@apply bg-ink text-white hover:bg-black;
+	}
+	.btn-sun {
+		@apply bg-sun-400 text-ink hover:bg-sun-300;
+	}
+	.btn-soft {
+		@apply bg-neutral-100 text-ink hover:bg-neutral-200;
+	}
+	.btn-ghost {
+		@apply text-ink hover:bg-neutral-100;
+	}
+	.btn-outline {
+		@apply border border-line bg-white text-ink hover:border-neutral-300 hover:bg-neutral-50;
+	}
+	.btn-danger {
+		@apply bg-white text-brand-700 ring-1 ring-brand-200 hover:bg-brand-50;
+	}
+
+	.chip {
+		@apply inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-[15px] text-ink;
+	}
+	.badge {
+		@apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-normal;
+	}
+
+	.card {
+		@apply rounded-2xl border border-line bg-white;
+	}
+	.panel {
+		@apply rounded-3xl bg-white;
+	}
+
+	.label {
+		@apply mb-1.5 block text-sm font-normal text-ink;
+	}
+	.input {
+		@apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-[15px] font-light text-ink transition outline-none placeholder:text-neutral-400 focus:border-brand-400 focus:ring-4 focus:ring-brand-100 disabled:bg-neutral-50;
+	}
+	.hint {
+		@apply mt-1 text-xs text-muted;
+	}
+
+	.tab {
+		@apply relative -mb-px border-b-2 border-transparent px-1 pb-3 text-[17px] font-light whitespace-nowrap text-muted transition hover:text-ink;
+	}
+	.tab-active {
+		@apply border-ink font-normal text-ink;
+	}
+
+	/* Long-form reading content uses Sarabun */
+	.prose-read {
+		@apply font-read text-[17px] leading-[1.85] font-normal text-neutral-800;
+	}
+	.prose-read h1 {
+		@apply mt-6 mb-3 font-sans text-2xl font-medium;
+	}
+	.prose-read h2 {
+		@apply mt-6 mb-2 font-sans text-xl font-medium;
+	}
+	.prose-read h3 {
+		@apply mt-5 mb-2 font-sans text-lg font-medium;
+	}
+	.prose-read p {
+		@apply my-3;
+	}
+	.prose-read ul {
+		@apply my-3 list-disc pl-6;
+	}
+	.prose-read ol {
+		@apply my-3 list-decimal pl-6;
+	}
+	.prose-read a {
+		@apply text-brand-700 underline underline-offset-2;
+	}
+	.prose-read code {
+		@apply rounded bg-neutral-100 px-1.5 py-0.5 text-[0.9em];
+	}
+	.prose-read img {
+		@apply my-4 max-w-full rounded-xl;
+	}
+	.prose-read blockquote {
+		@apply my-4 border-l-4 border-sun-400 bg-sun-50 px-4 py-2;
+	}
+}
+
+@utility scrollbar-none {
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}

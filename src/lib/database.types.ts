@@ -97,6 +97,36 @@ export type Database = {
 				Update: { capacity?: number | null; created_at?: string; description?: string | null; end_date?: string | null; id?: string; is_published?: boolean; name?: string; price?: number; schedule_note?: string | null; start_date?: string | null; subject_id?: string; updated_at?: string };
 				Relationships: [{ foreignKeyName: 'terms_subject_id_fkey'; columns: ['subject_id']; isOneToOne: false; referencedRelation: 'subjects'; referencedColumns: ['id'] }];
 			};
+			feed_posts: {
+				Row: { author_id: string | null; body: string; comment_count: number; created_at: string; edited_at: string | null; id: string; is_pinned: boolean; like_count: number; term_id: string };
+				Insert: { author_id?: string | null; body?: string; comment_count?: number; created_at?: string; edited_at?: string | null; id?: string; is_pinned?: boolean; like_count?: number; term_id: string };
+				Update: { author_id?: string | null; body?: string; comment_count?: number; created_at?: string; edited_at?: string | null; id?: string; is_pinned?: boolean; like_count?: number; term_id?: string };
+				Relationships: [{ foreignKeyName: 'feed_posts_author_id_fkey'; columns: ['author_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] }, { foreignKeyName: 'feed_posts_term_id_fkey'; columns: ['term_id']; isOneToOne: false; referencedRelation: 'terms'; referencedColumns: ['id'] }];
+			};
+			feed_post_media: {
+				Row: { height: number | null; id: string; kind: 'image' | 'video'; mime_type: string | null; position: number; post_id: string; size_bytes: number | null; storage_path: string; width: number | null };
+				Insert: { height?: number | null; id?: string; kind: 'image' | 'video'; mime_type?: string | null; position?: number; post_id: string; size_bytes?: number | null; storage_path: string; width?: number | null };
+				Update: { height?: number | null; id?: string; kind?: 'image' | 'video'; mime_type?: string | null; position?: number; post_id?: string; size_bytes?: number | null; storage_path?: string; width?: number | null };
+				Relationships: [{ foreignKeyName: 'feed_post_media_post_id_fkey'; columns: ['post_id']; isOneToOne: false; referencedRelation: 'feed_posts'; referencedColumns: ['id'] }];
+			};
+			feed_post_likes: {
+				Row: { created_at: string; post_id: string; user_id: string };
+				Insert: { created_at?: string; post_id: string; user_id: string };
+				Update: { created_at?: string; post_id?: string; user_id?: string };
+				Relationships: [{ foreignKeyName: 'feed_post_likes_post_id_fkey'; columns: ['post_id']; isOneToOne: false; referencedRelation: 'feed_posts'; referencedColumns: ['id'] }, { foreignKeyName: 'feed_post_likes_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] }];
+			};
+			feed_comments: {
+				Row: { body: string; created_at: string; edited_at: string | null; id: string; like_count: number; parent_id: string | null; post_id: string; reply_to_user_id: string | null; user_id: string };
+				Insert: { body: string; created_at?: string; edited_at?: string | null; id?: string; like_count?: number; parent_id?: string | null; post_id: string; reply_to_user_id?: string | null; user_id: string };
+				Update: { body?: string; created_at?: string; edited_at?: string | null; id?: string; like_count?: number; parent_id?: string | null; post_id?: string; reply_to_user_id?: string | null; user_id?: string };
+				Relationships: [{ foreignKeyName: 'feed_comments_parent_id_fkey'; columns: ['parent_id']; isOneToOne: false; referencedRelation: 'feed_comments'; referencedColumns: ['id'] }, { foreignKeyName: 'feed_comments_post_id_fkey'; columns: ['post_id']; isOneToOne: false; referencedRelation: 'feed_posts'; referencedColumns: ['id'] }, { foreignKeyName: 'feed_comments_reply_to_user_id_fkey'; columns: ['reply_to_user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] }, { foreignKeyName: 'feed_comments_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] }];
+			};
+			feed_comment_likes: {
+				Row: { comment_id: string; created_at: string; user_id: string };
+				Insert: { comment_id: string; created_at?: string; user_id: string };
+				Update: { comment_id?: string; created_at?: string; user_id?: string };
+				Relationships: [{ foreignKeyName: 'feed_comment_likes_comment_id_fkey'; columns: ['comment_id']; isOneToOne: false; referencedRelation: 'feed_comments'; referencedColumns: ['id'] }, { foreignKeyName: 'feed_comment_likes_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] }];
+			};
 			video_progress: {
 				Row: { completed_at: string | null; content_id: string; duration_seconds: number; last_position: number; updated_at: string; user_id: string; watched: unknown; watched_seconds: number };
 				Insert: { completed_at?: string | null; content_id: string; duration_seconds?: number; last_position?: number; updated_at?: string; user_id: string; watched?: unknown; watched_seconds?: number };

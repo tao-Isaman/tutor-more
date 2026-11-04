@@ -8,6 +8,7 @@
 	const base = $derived(`/terms/${data.term.id}`);
 	const tabs = $derived([
 		{ href: base, label: 'บทเรียน', exact: true },
+		{ href: `${base}/feed`, label: 'กระดานข่าว' },
 		{ href: `${base}/announcements`, label: 'ประกาศ' },
 		{ href: `${base}/attendance`, label: 'เช็คชื่อ' },
 		...(data.isStaff

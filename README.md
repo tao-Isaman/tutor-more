@@ -42,6 +42,10 @@ where id = (select id from auth.users where email = 'you@example.com');
 - **Video tracking:** the player reports actually played `[from, to)` second ranges. The DB merges them as an
   `int4multirange`, so rewatching doesn't inflate totals, and a report can't claim more seconds than have passed
   since the previous report. 90 % watched = completed. Tutors see per-student progress per lesson plus a class matrix (Insights).
+- **Class feed (กระดานข่าว)** — tutors post text with up to 10 images (auto-compressed to WebP) or one video;
+  every class member can like posts, comment, like comments and reply. Replies are two levels like Facebook:
+  replying to a reply stays in the same thread and @mentions that person. Like/comment counts are kept by
+  database triggers that clients can't forge; new comments arrive in realtime.
 - **Uploads** use resumable TUS uploads with progress, into the private `course-media` bucket (`<term_id>/…`). Playback uses
   signed URLs (3 h).
 

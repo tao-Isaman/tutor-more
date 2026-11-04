@@ -8,7 +8,7 @@ export const load: PageLoad = async ({ parent, params, depends }) => {
 	const [{ data: items }, students] = await Promise.all([
 		supabase
 			.from('announcements')
-			.select(`*, author:profiles(${PROFILE_LITE}), reads:announcement_reads(user_id, read_at)`)
+			.select(`*, author:profiles!announcements_author_id_fkey(${PROFILE_LITE}), reads:announcement_reads(user_id, read_at)`)
 			.eq('term_id', params.id)
 			.order('is_pinned', { ascending: false })
 			.order('created_at', { ascending: false }),

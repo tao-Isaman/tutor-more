@@ -33,7 +33,7 @@
 	const repliesOf = (id: string) => comments.filter((c) => c.parent_id === id);
 
 	async function fetchOne(id: string) {
-		const { data } = await supabase.from('comments').select(`*, author:profiles(${PROFILE_LITE})`).eq('id', id).maybeSingle();
+		const { data } = await supabase.from('comments').select(`*, author:profiles!comments_user_id_fkey(${PROFILE_LITE})`).eq('id', id).maybeSingle();
 		return data as Comment | null;
 	}
 
@@ -63,7 +63,7 @@
 		const { data, error } = await supabase
 			.from('comments')
 			.insert({ content_id: contentId, user_id: userId, body: trimmed, parent_id: parent })
-			.select(`*, author:profiles(${PROFILE_LITE})`)
+			.select(`*, author:profiles!comments_user_id_fkey(${PROFILE_LITE})`)
 			.single();
 		busy = false;
 		if (error) {

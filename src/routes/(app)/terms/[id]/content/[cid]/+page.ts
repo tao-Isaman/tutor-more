@@ -27,7 +27,7 @@ export const load: PageLoad = async ({ parent, params, depends }) => {
 		supabase.from('contents').select('id, title, type').eq('term_id', params.id).order('position').order('created_at'),
 		supabase
 			.from('comments')
-			.select(`*, author:profiles(${PROFILE_LITE})`)
+			.select(`*, author:profiles!comments_user_id_fkey(${PROFILE_LITE})`)
 			.eq('content_id', content.id)
 			.order('created_at'),
 		isStaff

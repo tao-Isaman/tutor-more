@@ -26,7 +26,7 @@ type Client = SupabaseClient<Database>;
 export async function loadFeedPage(supabase: Client, termId: string, userId: string, offset = 0) {
 	const { data: rows, error } = await supabase
 		.from('feed_posts')
-		.select(`*, author:profiles(${PROFILE_LITE}), media:feed_post_media(*)`)
+		.select(`*, author:profiles!feed_posts_author_id_fkey(${PROFILE_LITE}), media:feed_post_media(*)`)
 		.eq('term_id', termId)
 		.order('is_pinned', { ascending: false })
 		.order('created_at', { ascending: false })

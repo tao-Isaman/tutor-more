@@ -13,6 +13,10 @@
 	let password = $state('');
 	let busy = $state(false);
 	let error = $state('');
+	// Each reset request sends an email, and the project's mailer is rate-limited.
+	// Block double-clicks and wait 60 s before allowing another request.
+	let resetCooldown = $state(0);
+	let resetBusy = $state(false);
 
 	const next = $derived(safeNext(page.url.searchParams.get('next')));
 
@@ -35,11 +39,22 @@
 			error = 'กรอกอีเมลก่อน แล้วกด "ลืมรหัสผ่าน?"';
 			return;
 		}
+		if (resetBusy || resetCooldown > 0) return;
+		resetBusy = true;
 		const { error: err } = await data.supabase.auth.resetPasswordForEmail(email.trim(), {
 			redirectTo: `${page.url.origin}/auth/callback?next=/settings%3Ftab%3Dsecurity`
 		});
-		if (err) toast.error(errorMessage(err));
-		else toast('ส่งลิงก์ตั้งรหัสผ่านใหม่แล้ว กรุณาเช็คอีเมล');
+		resetBusy = false;
+		if (err) {
+			toast.error(errorMessage(err));
+			return;
+		}
+		toast('ส่งลิงก์ตั้งรหัสผ่านใหม่แล้ว กรุณาเช็คอีเมล');
+		resetCooldown = 60;
+		const t = setInterval(() => {
+			resetCooldown -= 1;
+			if (resetCooldown <= 0) clearInterval(t);
+		}, 1000);
 	}
 </script>
 
@@ -57,7 +72,14 @@
 		<div>
 			<div class="flex items-center justify-between">
 				<label class="label" for="password">รหัสผ่าน</label>
-				<button type="button" class="mb-1.5 text-sm text-brand-600 hover:underline" onclick={forgot}>ลืมรหัสผ่าน?</button>
+				<button
+					type="button"
+					class="mb-1.5 text-sm text-brand-600 hover:underline disabled:text-muted disabled:no-underline"
+					onclick={forgot}
+					disabled={resetBusy || resetCooldown > 0}
+				>
+					{resetCooldown > 0 ? `ส่งใหม่ได้ใน ${resetCooldown} วิ` : 'ลืมรหัสผ่าน?'}
+				</button>
 			</div>
 			<input id="password" class="input" type="password" autocomplete="current-password" required bind:value={password} />
 		</div>

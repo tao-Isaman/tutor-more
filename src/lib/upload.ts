@@ -11,7 +11,9 @@ export async function uploadResumable(
 	bucket: string,
 	path: string,
 	file: File,
-	onProgress: (pct: number) => void
+	onProgress: (pct: number) => void,
+	/** Overrides the browser's own guess, which is empty for .mov on some systems. */
+	contentType?: string
 ): Promise<void> {
 	const {
 		data: { session }
@@ -32,7 +34,7 @@ export async function uploadResumable(
 			metadata: {
 				bucketName: bucket,
 				objectName: path,
-				contentType: file.type || 'application/octet-stream',
+				contentType: contentType || file.type || 'application/octet-stream',
 				cacheControl: '3600'
 			},
 			chunkSize: 6 * 1024 * 1024, // Supabase requires exactly 6MB chunks

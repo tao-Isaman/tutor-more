@@ -4,6 +4,7 @@
 	import type { Database, Enums, Tables } from '#lib/database.types.ts';
 	import { toast } from '#lib/toast.svelte.ts';
 	import { optimiseImage } from '#lib/image.ts';
+	import { VIDEO_ACCEPT, drivePreviewUrl, sniffVideoCodec, videoContentType } from '#lib/media.ts';
 	import { readVideoDuration, safeFileName, uploadResumable } from '#lib/upload.ts';
 	import { errorMessage, formatBytes } from '#lib/utils.ts';
 
@@ -26,7 +27,7 @@
 	} = $props();
 
 	const types: { value: Enums<'content_type'>; label: string; icon: typeof Film; accept?: string }[] = [
-		{ value: 'video', label: 'วิดีโอ', icon: Film, accept: 'video/*' },
+		{ value: 'video', label: 'วิดีโอ', icon: Film, accept: VIDEO_ACCEPT },
 		{ value: 'text', label: 'บทความ', icon: FileText },
 		{ value: 'image', label: 'รูปภาพ', icon: Image, accept: 'image/*' },
 		{ value: 'file', label: 'ไฟล์', icon: Paperclip, accept: '' },
@@ -46,6 +47,8 @@
 	let file = $state<File | null>(null);
 	let originalBytes = $state<number | null>(null);
 	let optimising = $state(false);
+	/** The picked video is HEVC (H.265): it uploads fine, but not every browser plays it. */
+	let hevc = $state(false);
 	let progress = $state(0);
 	let busy = $state(false);
 
@@ -60,7 +63,15 @@
 			return;
 		}
 		originalBytes = null;
-		if (picked && f.type === 'image') {
+		hevc = false;
+		if (picked && f.type === 'video') {
+			if (!videoContentType(picked)) {
+				toast.error('ไฟล์นี้ไม่ใช่วิดีโอ (รองรับ .mp4, .mov, .m4v, .webm)');
+				return;
+			}
+			file = picked;
+			hevc = (await sniffVideoCodec(picked).catch(() => null)) === 'hevc';
+		} else if (picked && f.type === 'image') {
 			// Shrink lesson images before upload (WebP, max 2400px) — keeps diagrams readable
 			optimising = true;
 			try {
@@ -90,11 +101,12 @@
 			let upload: Partial<Tables<'contents'>> = {};
 			if (needsFile && file) {
 				const path = `${termId}/${safeFileName(file.name)}`;
-				await uploadResumable(supabase, 'course-media', path, file, (p) => (progress = p));
+				const mime = (f.type === 'video' ? videoContentType(file) : null) ?? file.type;
+				await uploadResumable(supabase, 'course-media', path, file, (p) => (progress = p), mime);
 				upload = {
 					storage_path: path,
 					file_name: file.name,
-					mime_type: file.type || null,
+					mime_type: mime || null,
 					size_bytes: file.size,
 					duration_seconds: f.type === 'video' ? await readVideoDuration(file) : null
 				};
@@ -141,6 +153,7 @@
 						f.type = t.value;
 						file = null;
 						originalBytes = null;
+						hevc = false;
 					}}
 					class="flex flex-col items-center gap-1 rounded-2xl border py-3 text-sm transition {f.type === t.value
 						? 'border-brand-500 bg-brand-50 text-brand-700'
@@ -191,12 +204,27 @@
 			{/if}
 			<input type="file" accept={current.accept} class="sr-only" onchange={pick} />
 		</label>
+		{#if f.type === 'video'}
+			{#if hevc}
+				<p class="rounded-2xl border border-sun-300 bg-sun-50 px-4 py-3 text-sm">
+					วิดีโอนี้เข้ารหัสแบบ HEVC (H.265) ซึ่งเป็นค่าเริ่มต้นของ iPhone อัปโหลดได้ตามปกติ และเล่นได้ใน Safari
+					แต่ Chrome หรือ Firefox บนบางเครื่องอาจเล่นไม่ได้ ถ้าอยากให้นักเรียนทุกคนดูได้แน่นอน ให้แปลงเป็น MP4 (H.264) ก่อนอัปโหลด
+				</p>
+			{:else if !file}
+				<p class="text-sm text-muted">รองรับ .mp4 และ .mov (แนะนำ H.264 เพื่อให้เล่นได้ทุกเบราว์เซอร์)</p>
+			{/if}
+		{/if}
 	{/if}
 
 	{#if f.type === 'link'}
 		<div>
 			<label class="label" for="c-url">ลิงก์ (URL)</label>
 			<input id="c-url" class="input" type="url" required placeholder="https://" bind:value={f.external_url} />
+			{#if drivePreviewUrl(f.external_url)}
+				<p class="mt-2 text-sm text-muted">
+					ลิงก์ Google Drive จะแสดงเป็นตัวเล่นในหน้าบทเรียน ไฟล์ต้องแชร์แบบ “ทุกคนที่มีลิงก์” และระบบจะไม่นับเปอร์เซ็นต์การดูของวิดีโอจาก Drive
+				</p>
+			{/if}
 		</div>
 	{/if}
 

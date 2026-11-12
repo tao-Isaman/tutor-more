@@ -39,6 +39,7 @@
 
 	const images = $derived(post.media.filter((m) => m.kind === 'image'));
 	const video = $derived(post.media.find((m) => m.kind === 'video'));
+	let unplayable = $state(false);
 	const longText = $derived(post.body.length > 420 && !expandedText);
 	const shown = $derived(images.slice(0, 4));
 	const extra = $derived(images.length - shown.length);
@@ -177,7 +178,20 @@
 	<!-- Media -->
 	{#if video?.url}
 		<!-- svelte-ignore a11y_media_has_caption -->
-		<video src={video.url} controls playsinline preload="metadata" class="mt-3 max-h-[70vh] w-full bg-black"></video>
+		<video
+			src={video.url}
+			controls
+			playsinline
+			preload="metadata"
+			class="mt-3 max-h-[70vh] w-full bg-black"
+			onerror={() => (unplayable = true)}
+			onloadedmetadata={(e) => (unplayable = e.currentTarget.videoWidth === 0)}
+		></video>
+		{#if unplayable}
+			<p class="mx-4 mt-3 rounded-2xl border border-sun-300 bg-sun-50 px-4 py-3 text-sm" role="alert">
+				เบราว์เซอร์นี้เล่นวิดีโอนี้ไม่ได้ ไฟล์อาจเข้ารหัสแบบ HEVC (H.265) จากมือถือ ลองเปิดด้วย Safari หรืออัปเดตเบราว์เซอร์เป็นรุ่นล่าสุด ถ้ายังไม่ได้ให้แจ้งผู้สอนเพื่อแปลงไฟล์เป็น MP4 (H.264)
+			</p>
+		{/if}
 	{:else if shown.length}
 		<div class="mt-3 grid gap-0.5 {gridClass} {shown.length > 1 ? 'aspect-square sm:aspect-[4/3]' : ''}">
 			{#each shown as m, i (m.id)}

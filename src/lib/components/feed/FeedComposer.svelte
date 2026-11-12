@@ -5,6 +5,7 @@
 	import type { Database } from '#lib/database.types.ts';
 	import { optimiseImage } from '#lib/image.ts';
 	import { toast } from '#lib/toast.svelte.ts';
+	import { VIDEO_ACCEPT, videoContentType } from '#lib/media.ts';
 	import { safeFileName, uploadResumable } from '#lib/upload.ts';
 	import { errorMessage, formatBytes, type ProfileLite } from '#lib/utils.ts';
 
@@ -61,6 +62,7 @@
 		input.value = '';
 		if (!f) return;
 		if (drafts.length) return toast.error('วิดีโอต้องโพสต์แยก ไม่รวมกับรูป');
+		if (!videoContentType(f)) return toast.error('ไฟล์นี้ไม่ใช่วิดีโอ (รองรับ .mp4, .mov, .m4v, .webm)');
 		if (f.size > MAX_VIDEO_BYTES) return toast.error('วิดีโอต้องมีขนาดไม่เกิน 2 GB');
 		drafts.push({ file: f, kind: 'video', preview: URL.createObjectURL(f) });
 	}
@@ -85,7 +87,7 @@
 				if (d.kind === 'video') {
 					await uploadResumable(supabase, 'course-media', path, d.file, (p) => {
 						progress = Math.round(((doneBytes + (d.file.size * p) / 100) / totalBytes) * 100);
-					});
+					}, videoContentType(d.file) ?? undefined);
 				} else {
 					const { error } = await supabase.storage
 						.from('course-media')
@@ -98,7 +100,7 @@
 				media.push({
 					kind: d.kind,
 					storage_path: path,
-					mime_type: d.file.type || null,
+					mime_type: (d.kind === 'video' ? videoContentType(d.file) : d.file.type) || null,
 					size_bytes: d.file.size,
 					width: d.width ?? null,
 					height: d.height ?? null,
@@ -194,7 +196,7 @@
 			<label class="btn btn-ghost btn-sm cursor-pointer {drafts.length || posting ? 'pointer-events-none opacity-40' : ''}">
 				<Film size={18} class="text-brand-600" />
 				วิดีโอ
-				<input type="file" accept="video/*" class="sr-only" onchange={addVideo} disabled={drafts.length > 0 || posting} />
+				<input type="file" accept={VIDEO_ACCEPT} class="sr-only" onchange={addVideo} disabled={drafts.length > 0 || posting} />
 			</label>
 		</div>
 		<button class="btn btn-primary btn-sm px-6" disabled={!canPost} onclick={post}>

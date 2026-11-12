@@ -32,6 +32,8 @@
 	let segStart: number | null = null;
 	let lastTime = 0;
 	let flushing = false;
+	/** The browser cannot decode this file (no picture, or an error): typically HEVC outside Safari. */
+	let unplayable = $state(false);
 	let timer: ReturnType<typeof setInterval> | undefined;
 
 	function duration() {
@@ -74,6 +76,8 @@
 	}
 
 	function onLoaded() {
+		// sound decoded but no picture: the video codec is not supported here
+		if (video && video.videoWidth === 0) unplayable = true;
 		if (video && startAt > 5 && startAt < duration() - 5) video.currentTime = startAt;
 		lastTime = video?.currentTime ?? 0;
 	}
@@ -113,5 +117,11 @@
 	onpause={onPause}
 	onended={onPause}
 	onseeking={() => void flush()}
+	onerror={() => (unplayable = true)}
 	class="aspect-video w-full rounded-2xl bg-black"
 ></video>
+{#if unplayable}
+	<p class="mt-3 rounded-2xl border border-sun-300 bg-sun-50 px-4 py-3 text-sm" role="alert">
+		เบราว์เซอร์นี้เล่นวิดีโอนี้ไม่ได้ ไฟล์อาจเข้ารหัสแบบ HEVC (H.265) จากมือถือ ลองเปิดด้วย Safari หรืออัปเดตเบราว์เซอร์เป็นรุ่นล่าสุด ถ้ายังไม่ได้ให้แจ้งผู้สอนเพื่อแปลงไฟล์เป็น MP4 (H.264)
+	</p>
+{/if}

@@ -4,11 +4,14 @@
 	import Markdown from '#lib/components/Markdown.svelte';
 	import QaThread from '#lib/components/QaThread.svelte';
 	import VideoPlayer from '#lib/components/VideoPlayer.svelte';
+	import { drivePreviewUrl } from '#lib/media.ts';
 	import { displayName, formatBytes, formatDuration, percent, timeAgo } from '#lib/utils.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 	const c = $derived(data.content);
+	/** A link to one Google Drive file is shown in Drive's own player, with the link kept below it. */
+	const drive = $derived(c.type === 'link' && c.external_url ? drivePreviewUrl(c.external_url) : null);
 
 	let watched = $state<{ watched_seconds: number; duration_seconds: number; completed: boolean } | null>(null);
 	const myWatched = $derived(
@@ -83,6 +86,19 @@
 					<span class="btn btn-soft btn-sm">เปิด</span>
 				</a>
 			{:else if c.type === 'link' && c.external_url}
+				{#if drive}
+					<iframe
+						src={drive}
+						title={c.title}
+						allow="autoplay; encrypted-media; fullscreen"
+						allowfullscreen
+						loading="lazy"
+						class="mb-3 aspect-video w-full rounded-2xl border border-line bg-black"
+					></iframe>
+					<p class="mb-3 text-sm text-muted">
+						วิดีโอนี้เล่นจาก Google Drive ระบบจึงบันทึกได้แค่ว่าเปิดบทเรียนแล้ว ไม่นับเปอร์เซ็นต์การดู ถ้าเล่นไม่ได้ให้กดเปิดลิงก์ด้านล่าง
+					</p>
+				{/if}
 				<a href={c.external_url} target="_blank" rel="noopener noreferrer" class="card flex items-center gap-4 p-5 hover:shadow-md">
 					<span class="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600"><ExternalLink size={22} /></span>
 					<span class="min-w-0 flex-1 truncate text-brand-700">{c.external_url}</span>

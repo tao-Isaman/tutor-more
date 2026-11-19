@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Staff send a student a password-reset link, with an audit of who asked for whom.
--- Not applied yet — needs the owner's approval. Rollback: supabase/rollback/0013_password_reset_audit.sql
+-- Applied to prod 2026-11-19 (owner approved via Zerem; dry run in a rolled-back block first). Rollback: supabase/rollback/0013_password_reset_audit.sql
 --
 -- No service-role key (guardrail R3): the app calls request_student_password_reset() as the signed-in staff member;
 -- the function checks the caller in the database, records the request and returns the student's e-mail; the app then
@@ -23,6 +23,7 @@ alter table public.password_reset_audit enable row level security;
 create policy "reset audit: admin or own requests" on public.password_reset_audit
   for select to authenticated using (public.is_admin() or actor_id = (select auth.uid()));
 revoke all on public.password_reset_audit from anon;
+revoke all on public.password_reset_audit from authenticated; -- default grants include insert/update/delete
 grant select on public.password_reset_audit to authenticated;
 
 create or replace function public.request_student_password_reset(p_student uuid)

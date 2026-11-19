@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { goto, invalidate } from '$app/navigation';
-	import { Check, Download, Mail, MessageCircle, Phone, Search, UserX, X } from '@lucide/svelte';
+	import { Check, Download, KeyRound, Mail, MessageCircle, Phone, Search, UserX, X } from '@lucide/svelte';
 	import Avatar from '#lib/components/Avatar.svelte';
 	import EmptyState from '#lib/components/EmptyState.svelte';
 	import StatusBadge from '#lib/components/StatusBadge.svelte';
+	import { page } from '$app/state';
+	import { sendStudentResetLink } from '#lib/recovery.ts';
 	import { toast } from '#lib/toast.svelte.ts';
 	import { EDUCATION_LABEL, errorMessage, fullName, percent, timeAgo } from '#lib/utils.ts';
 	import type { PageProps } from './$types';
@@ -42,6 +44,15 @@
 		if (error) return toast.error(errorMessage(error));
 		toast('นำนักเรียนออกแล้ว');
 		await invalidate('app:students');
+	}
+
+	async function sendReset(studentId: string, name: string) {
+		if (!confirm(`ส่งลิงก์ตั้งรหัสผ่านใหม่ไปที่อีเมลของ ${name}? (ระบบบันทึกว่าใครเป็นคนส่ง)`)) return;
+		busyId = studentId;
+		const problem = await sendStudentResetLink(data.supabase, studentId, page.url.origin);
+		busyId = null;
+		if (problem) return toast.error(problem);
+		toast(`ส่งลิงก์ไปที่อีเมลของ ${name} แล้ว`);
 	}
 
 	async function message(studentId: string) {
@@ -164,6 +175,7 @@
 							</td>
 							<td class="px-4 py-3 text-right whitespace-nowrap">
 								<button class="btn btn-soft btn-sm" onclick={() => message(e.student_id)}><MessageCircle size={15} /> แชท</button>
+								<button class="btn btn-ghost btn-sm" title="ส่งลิงก์ตั้งรหัสผ่านใหม่" aria-label="ส่งลิงก์ตั้งรหัสผ่านใหม่" disabled={busyId === e.student_id} onclick={() => sendReset(e.student_id, fullName(e.student))}><KeyRound size={15} /></button>
 								<button class="btn btn-ghost btn-sm text-brand-600" aria-label="นำออก" onclick={() => removeStudent(e.id, fullName(e.student))}><UserX size={15} /></button>
 							</td>
 						</tr>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { passwordProblem } from '#lib/recovery.ts';
 	import { invalidate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Camera, LoaderCircle } from '@lucide/svelte';
@@ -103,8 +104,8 @@
 
 	async function changePassword(e: SubmitEvent) {
 		e.preventDefault();
-		if (pw.next.length < 8) return toast.error('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร');
-		if (pw.next !== pw.confirm) return toast.error('รหัสผ่านไม่ตรงกัน');
+		const problem = passwordProblem(pw.next, pw.confirm); // the same rule as /reset-password
+		if (problem) return toast.error(problem);
 		busy = true;
 		const { error } = await data.supabase.auth.updateUser({ password: pw.next });
 		busy = false;

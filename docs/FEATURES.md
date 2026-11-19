@@ -14,6 +14,10 @@ Who: **anyone** = not signed in · **student** · **tutor** · **admin** · staf
 | Sign in | anyone | `/login` | landing → sign in | `src/routes/login/+page.svelte` | drive `login` |
 | Register | anyone | `/register` | sign in → register | `src/routes/register/+page.svelte` | drive `register` |
 | Finish sign-in from an e-mail or Google | anyone | `/auth/callback` | the link in the e-mail | `src/routes/auth/callback/+server.ts` | — |
+| Forgot password: e-mail a reset link (same answer whether or not the address exists, 60 s cooldown) | anyone | `/forgot-password` | sign in → "ลืมรหัสผ่าน?" | `src/routes/forgot-password/+page.svelte`, `src/lib/recovery.ts` | `src/lib/recovery.test.ts` |
+| Open the reset link on any device (server-side token check, old ?code= links too) | anyone | `/auth/confirm` | the link in the reset e-mail | `src/routes/auth/confirm/+server.ts`, `src/lib/recovery.ts` | `src/lib/recovery.test.ts` |
+| Set a new password after the reset link; dead link → explained + "ขอลิงก์ใหม่" | anyone with the link | `/reset-password` | /auth/confirm | `src/routes/reset-password/+page.svelte`, `src/lib/recovery.ts` | `src/lib/recovery.test.ts` |
+| Staff send a student a reset link (DB checks role + own students, audit row, 1/min) — needs migration 0013 | admin, tutor of the term | `/terms/[id]/students` | term → นักเรียน → 🔑 | `src/routes/(app)/terms/[id]/students/+page.svelte`, `src/lib/recovery.ts`, `supabase/migrations/0013_password_reset_audit.sql` | `src/lib/recovery.test.ts` |
 | Course catalogue (public on purpose) | anyone | `/explore` | menu → ค้นหาคอร์ส | `src/routes/(app)/explore/` | drive `explore` |
 | One subject and its terms (public on purpose) | anyone | `/subjects/[id]` | ค้นหาคอร์ส → a subject | `src/routes/(app)/subjects/[id]/` | — |
 

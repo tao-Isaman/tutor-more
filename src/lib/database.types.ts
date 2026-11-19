@@ -152,6 +152,7 @@ export type Database = {
 			mark_announcement_read: { Args: { p_announcement_id: string }; Returns: undefined };
 			mark_conversation_read: { Args: { p_conversation_id: string }; Returns: undefined };
 			record_content_view: { Args: { p_content_id: string }; Returns: undefined };
+			request_student_password_reset: { Args: { p_student: string }; Returns: string };
 			record_video_progress: {
 				Args: { p_content_id: string; p_from: number; p_to: number; p_position: number; p_duration: number };
 				Returns: { watched_seconds: number; duration_seconds: number; completed: boolean }[];

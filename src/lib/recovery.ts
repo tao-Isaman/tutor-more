@@ -10,8 +10,10 @@ import { safeNext } from './utils.ts';
 /** One reset e-mail per minute from a page; the project's mailer allows 30 an hour for the whole site. */
 export const RECOVERY_COOLDOWN_S = 60;
 
-/** redirectTo for resetPasswordForEmail. The e-mail template builds the link from it ({{ .RedirectTo }}), so a
- *  preview deploy gets its own link back — once that origin is in Supabase's redirect allow list. */
+/** redirectTo for resetPasswordForEmail. The recovery e-mail template links to
+ *  {{ .SiteURL }}/auth/confirm?token_hash=…&type=recovery&next=/reset-password and does not use it (so a reset sent
+ *  from the Supabase dashboard, with no redirectTo, works too); it still matters if the template is ever reverted
+ *  to {{ .ConfirmationURL }}, where Supabase redirects here with ?code=. */
 export function recoveryRedirect(origin: string): string {
 	return `${origin.replace(/\/+$/, '')}/auth/confirm?next=${encodeURIComponent('/reset-password')}`;
 }
